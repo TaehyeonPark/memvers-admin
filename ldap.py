@@ -1,10 +1,11 @@
 import subprocess
+import ldap3
 
 adminPassword = "admin_password"
-ldapHost = "ldap_host"
+ldapHost = 'ldap.sparcs.org'
 
 shell = '/bin/sh'
-uid = int(subprocess.check_output(['id', '-u', 'nobody']).decode().strip())
+uid = lambda: int(subprocess.check_output(['id', '-u', 'nobody']).decode().strip())
 opt = {'shell': shell, 'uid': uid}
 
 def escape(str):
@@ -63,8 +64,19 @@ async def uids():
     else:
         return [int(s.strip()) for s in result.stdout.replace('uidNumber: ', '').split('\n')]
 
+def add(path):
+    command = 'ldapadd'
+    if path:
+        return e([command, host, admin, adminPass, file(path)]).then(lambda result: None).catch(lambda err: {'command': command, 'err': err})
+    else:
+        return {'command': command, 'path': None}
 
-
+def delete(un):
+    command = 'ldapdelete'
+    if un:
+        return e([command, host, admin, adminPass, dnOnly(un)]).then(lambda result: None).catch(lambda err: {'command': command, 'err': err})
+    else:
+        return {'command': command, 'un': None}
 
 def ldif(un, uid):
   return '\n'.join([
@@ -84,3 +96,31 @@ def ldif(un, uid):
     f"homeDirectory: /home/{un}",
     f"mail: {un}@sparcs.org"
   ])
+
+def bind(un, pw):
+    dn = f'uid={un},ou=People,dc=sparcs,dc=org'
+    try:
+        server = ldap3.Server(host=ldapHost, get_info=ldap3.ALL)
+        conn = ldap3.Connection(server, dn, pw, auto_bind=True)
+        return True
+    except ldap3.core.exceptions.LDAPBindError as e:
+        print(e)
+        return False
+
+if __name__ == "__main__":
+    from getpass import getpass
+    address = 'ldap.sparcs.org'
+    un = input('Username: ')
+    pw = getpass('Password: ')
+    dn = f'uid={un},ou=People,dc=sparcs,dc=org'
+    server = ldap3.Server(address, get_info=ldap3.ALL)
+    conn = None
+    try:
+        conn = ldap3.Connection(server, dn, pw, auto_bind=True)
+    except ldap3.core.exceptions.LDAPBindError as e:
+        print(e)
+        exit(1)
+    
+    conn.search('ou=People,dc=sparcs,dc=org', '(objectclass=posixAccount)', attributes=['uidNumber'])
+
+    print(conn.entries[0]['uidNumber'])

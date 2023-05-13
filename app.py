@@ -19,6 +19,8 @@ from model import Login
 
 from database import Redi
 
+import ldap
+
 from util import *
 
 
@@ -42,12 +44,13 @@ async def memvers(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("memvers.html", {"request": request}) if redi.exist(key=request.client.host) else RedirectResponse(url="/login")
 
 @app.get("/ldap", include_in_schema=False)
-async def ldap(request: Request):
+async def _ldap(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("ldap.html", {"request": request}) if redi.exist(key=request.client.host) else RedirectResponse(url="/login")
 
 @app.get("/register", include_in_schema=False)
 async def register(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request}) if redi.exist(key=request.client.host) else RedirectResponse(url="/login")
+
 
 
 @app.post("/memvers")
@@ -61,25 +64,16 @@ async def register(request: Request):
     return {"status": "OK!", "data": formData}
 
 @app.post("/ldap")
-async def ldap(request: Request):
+async def _ldap(request: Request):
     formData = await request.form()
     return {"status": "OK!", "data": formData}
 
 @app.post("/login")
 async def login(request: Request):
     formData = await request.form()
-    id = formData.get("id")
-    pw = formData.get("pw")
-    """
-    # This hard-coded login is for testing purposes only.
-    # id: test
-    # pw: test
-    """
-    if id == "test" and pw == "test":
-        uuid = get_random_uuid()
-        print(uuid)
-        redi.set(request.client.host, uuid, ex=5) # uuid method is currently not working
-        return {"result": "success", "uuid": uuid}
+    if ldap.bind(formData.get("id"), formData.get("pw")):
+        redi.set(request.client.host, id, ex=5)
+        return {"result": "success"}
     else:
         return {"result": "failed"}
 
