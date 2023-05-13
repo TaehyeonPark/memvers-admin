@@ -6,3 +6,8 @@ def get_internal_servertime() -> datetime:
 
 def get_random_uuid() -> str:
     return str(uuid.uuid4())
+
+def sanitize(string: str) -> str:
+    if not string.isalnum():
+        raise ValueError("Disallowed character")
+    return string

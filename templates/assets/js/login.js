@@ -1,7 +1,7 @@
 document.write("<script src='/assets/js/hashlib.js'></script>");
 function onClickLogin() {
     id = document.getElementById("IdInput").value;
-    pw = SHA256(document.getElementById("PasswordInput").value, "HEX");
+    pw = document.getElementById("PasswordInput").value;
 
     var xhr = new XMLHttpRequest();
     

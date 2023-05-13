@@ -27,16 +27,15 @@ app.mount("/assets", StaticFiles(directory="templates/assets"), name="assets")
 
 redi = Redi(host="localhost", port=6379, db=0)
 
-@app.get("/login", include_in_schema=False)
-async def root(request: Request):
-    print(request.client.host)
-    print(redi.exist(key=request.client.host))
-    return RedirectResponse(url="/") if redi.exist(key=request.client.host) else Jinja2Templates(directory="templates").TemplateResponse("login.html", {"request": request})
 
 @app.get("/", include_in_schema=False)
 @app.get("/index", include_in_schema=False)
 async def root(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("index.html", {"request": request}) if redi.exist(key=request.client.host) else RedirectResponse(url="/login")
+
+@app.get("/login", include_in_schema=False)
+async def root(request: Request):
+    return RedirectResponse(url="/") if redi.exist(key=request.client.host) else Jinja2Templates(directory="templates").TemplateResponse("login.html", {"request": request})
 
 @app.get("/memvers", include_in_schema=False)
 async def memvers(request: Request):
@@ -50,6 +49,11 @@ async def ldap(request: Request):
 async def register(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request}) if redi.exist(key=request.client.host) else RedirectResponse(url="/login")
 
+
+@app.post("/memvers")
+async def memvers(request: Request):
+    formData = await request.form()
+    return {"status": "OK!", "data": formData}
 
 @app.post("/register")
 async def register(request: Request):
@@ -69,12 +73,12 @@ async def login(request: Request):
     """
     # This hard-coded login is for testing purposes only.
     # id: test
-    # pw: test (sha256)
+    # pw: test
     """
-    if id == "test" and pw == "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08":
+    if id == "test" and pw == "test":
         uuid = get_random_uuid()
         print(uuid)
-        redi.set(request.client.host, uuid, ex=60*60) # uuid method is currently not working
+        redi.set(request.client.host, uuid, ex=5) # uuid method is currently not working
         return {"result": "success", "uuid": uuid}
     else:
         return {"result": "failed"}
