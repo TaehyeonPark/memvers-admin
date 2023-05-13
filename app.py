@@ -71,6 +71,7 @@ async def _ldap(request: Request):
 @app.post("/login")
 async def login(request: Request):
     formData = await request.form()
+    id = formData.get("id")
     if ldap.bind(formData.get("id"), formData.get("pw")):
         redi.set(request.client.host, id, ex=5)
         return {"result": "success"}
