@@ -32,11 +32,15 @@ def insert(db: Session, table: str = None, data: Dict = None):
     try:
         if table == "achivement":
             if _achivement_duplicate_check(db=db, data=data):
-                return {"status": 400, "message": f"REQ | {table} | Already exist"}
+                return False#, {"status": 400, "message": f"REQ | {table} | Already exist"}
+        print(f"INSERT INTO {table} VALUES {tuple(data.values())}")
         rtn, msg = _execute(db=db, query=text(f"INSERT INTO {table} VALUES {tuple(data.values())}"))
-        return msg if rtn else {"status": 500, "message": f"REQ | {table} | {msg}"}
+        print(msg)
+        return rtn
+        # return msg if rtn else {"status": 500, "message": f"REQ | {table} | {msg}"}
     except Exception as e:
-        return {"status": 500, "message": f"REQ | {table} | {e}"}
+        return False
+        # return {"status": 500, "message": f"REQ | {table} | {e}"}
     finally:
         db.close()
 

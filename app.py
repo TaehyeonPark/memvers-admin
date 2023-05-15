@@ -68,8 +68,8 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
     rtn = crud_admin.search(db=db, table='nugu', key=column, data=content, mode=mode)
     if type(rtn) == list:
         print("list")
-        rtn = dumps(rtn)
-        print(rtn)
+        # rtn = dumps(rtn)
+        # print(rtn)
         return {"status": "200", "data": rtn}
     else:
         print("dict")
@@ -95,18 +95,31 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
 #     else:
 #         return JSONResponse(content={"status": "200", "data": ""}, status_code=200)
         
-
-@app.post("/register") # Register both LDAP and Nugu DB
-async def register(request: Request):
+"""
+# Register both LDAP and Nugu DB
+"""
+@app.post("/register")
+async def register(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
     if formData.get("nickname") == None or formData.get("nickname") == "":
         return {"status": "failed", "data": "nickname is None"}
-    if formData.get("pw") == None or formData.get("pw") == "":
-        return {"status": "failed", "data": "pw is None"}
-    # if formData.get("pw") != formData.get("pw2"):
-    #     return {"status": "failed", "data": "pw != pw2"}
+    if formData.get("pw") == None or formData.get("pw") == "":  # TODO: Implement password policy
+        return {"status": "failed", "data": "pw is None"}       # Password double check will not be implemented
     
-    if ldap.add(un=formData.get("nickname"), pw=formData.get("pw")):
+    _keys = models.get_keys_from_table(table='nugu')
+    _types = models.get_types_from_table(table='nugu')
+
+    _data = {}
+
+    for _key in _keys:
+        print(_types[_key])
+        
+        if formData.get(_key) == None or formData.get(_key) == "":
+            _data[_key] = models.yield_default_value_type_by_key(table='nugu', key=_key)
+        else:
+            _data[_key] = formData.get(_key)
+
+    if ldap.add(un=formData.get("nickname"), pw=formData.get("pw")) and crud_admin.insert(db=db, table='nugu', data=_data):
         return HTMLResponse(content="<script>alert('Successfully added.');location.href='/register';</script>", status_code=200)
     return {"status": "failed", "data": "faild to add user"}
  

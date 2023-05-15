@@ -4,31 +4,40 @@ window.onload = () => {
 
 function onSearch(){
     var content = document.getElementById("memversSearch").value;
-    var table = document.getElementById("memversColumn");
-    var column = table.options[table.selectedIndex].value;
+    var columnBox = document.getElementById("memversColumn");
+    var column = columnBox.options[columnBox.selectedIndex].value;
     var xhr = new XMLHttpRequest();
     
     params = "content=" + content + "&column=" + column + "&mode=OR";
     xhr.open("GET", "/search?" + params);
     xhr.send();
     xhr.onreadystatechange = () => {
-        if(xhr.readyState == 4 && xhr.status == 200) {
+        if ( xhr.readyState == 4 && xhr.status == 200 ) {
             result = JSON.parse(xhr.responseText);
-            if (result.status == "200") {
-                memvers = result.data;
+            if ( result.status == "200" ) {
                 var table = document.getElementById("memversTable");
                 table.innerHTML = "";
-                for (var i = 0; i < memvers.length; i++) {
-                    console.log(memvers[i]);
+                for ( var i = 0; i < result.data.length; i++ ) {
+                    var data = result.data[i];
+                    if ( i == 0 ) {
+                        var row = table.insertRow(0);
+                        var keys = Object.keys(data).reverse();
+                        for ( var key in keys ) {
+                            var cell = row.insertCell(0);
+                            cell.innerHTML = keys[key];
+                        }
+                    }
+                    var row = table.insertRow(1);
+                    var keys = Object.keys(data).reverse();
+                    for ( var key in keys ) {
+                        var cell = row.insertCell(0);
+                        cell.innerHTML = data[keys[key]];
+                    }
                 }
-            } else if (result.status == "401") {
+            } else if ( result.status == "401" ) {
                 alert("Session expired, please login again.");
                 window.location.href = "/login";
             } 
         }
-        console.log(result);
-        console.log(xhr.status);
-        console.log(xhr.statusText);
-        console.log(xhr.readyState);
     }
 }

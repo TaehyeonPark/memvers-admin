@@ -67,17 +67,13 @@ async def uids():
 def add(un, pw):
     command = 'ldapadd'
     if bind(un, pw):
-        return {'command': command, 'err': 'already exists'}
+        return False
     else:
         """
         # TODO: add user to ldap
         # INFO: Not implemented yet
         """
-        return {'status': 'success'}
-    # if path:
-    #     return e([command, host, admin, adminPass, file(path)]).then(lambda result: None).catch(lambda err: {'command': command, 'err': err})
-    # else:
-    #     return {'command': command, 'path': None}
+        return True
 
 def delete(un):
     command = 'ldapdelete'
@@ -112,7 +108,7 @@ def bind(un, pw):
         conn = ldap3.Connection(server, dn, pw, auto_bind=True)
         return True
     except ldap3.core.exceptions.LDAPBindError as e:
-        print(e)
+        # print(e)
         return False
 
 if __name__ == "__main__":
