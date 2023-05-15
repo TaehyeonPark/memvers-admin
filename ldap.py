@@ -64,12 +64,20 @@ async def uids():
     else:
         return [int(s.strip()) for s in result.stdout.replace('uidNumber: ', '').split('\n')]
 
-def add(path):
+def add(un, pw):
     command = 'ldapadd'
-    if path:
-        return e([command, host, admin, adminPass, file(path)]).then(lambda result: None).catch(lambda err: {'command': command, 'err': err})
+    if bind(un, pw):
+        return {'command': command, 'err': 'already exists'}
     else:
-        return {'command': command, 'path': None}
+        """
+        # TODO: add user to ldap
+        # INFO: Not implemented yet
+        """
+        return {'status': 'success'}
+    # if path:
+    #     return e([command, host, admin, adminPass, file(path)]).then(lambda result: None).catch(lambda err: {'command': command, 'err': err})
+    # else:
+    #     return {'command': command, 'path': None}
 
 def delete(un):
     command = 'ldapdelete'

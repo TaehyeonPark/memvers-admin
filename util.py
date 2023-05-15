@@ -11,3 +11,10 @@ def sanitize(string: str) -> str:
     if not string.isalnum():
         raise ValueError("Disallowed character")
     return string
+
+def sanitize_nickname(string: str) -> str:
+    try:
+        if string.isalnum():
+            return string
+    except:
+        return None
