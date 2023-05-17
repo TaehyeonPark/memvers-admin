@@ -12,7 +12,7 @@
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0" style="color: var(--bs-card-cap-bg);background: var(--bs-blue);">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
                     <div class="sidebar-brand-text mx-3"><span>memvers</span></div>
                 </a>
@@ -140,7 +140,7 @@
                                             </select>&nbsp;</label></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" id="memversSearch" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search" onchange="onSearch();" onkeypress="onSearch();"></label></div>
+                                    <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" id="memversSearch" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Press enter to search" onchange="onSearch();" onkeypress="onSearch();"></label></div>
                                 </div>
                             </div>
                             <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
@@ -197,6 +197,7 @@
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/edit.js"></script>
     <script src="assets/js/hashlib.js"></script>
     <script src="assets/js/login.js"></script>
     <script src="assets/js/register.js"></script>

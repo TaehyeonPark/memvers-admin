@@ -1,3 +1,7 @@
+/**
+ * @param {String} input
+ * @returns {boolean}
+ */
 function SHA256(s){
 	 
     var chrsz   = 8;

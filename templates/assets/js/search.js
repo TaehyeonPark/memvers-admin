@@ -26,12 +26,22 @@ function onSearch(){
                             var cell = row.insertCell(0);
                             cell.innerHTML = keys[key];
                         }
-                    }
-                    var row = table.insertRow(1);
-                    var keys = Object.keys(data).reverse();
-                    for ( var key in keys ) {
+                    } else {
+                        var row = table.insertRow(1);
+                        var keys = Object.keys(data).reverse();
+                        for ( var key in keys ) {
+                            var cell = row.insertCell(0);
+                            cell.innerHTML = data[keys[key]];
+                        }
                         var cell = row.insertCell(0);
-                        cell.innerHTML = data[keys[key]];
+                        var btn = document.createElement("button");
+                        btn.className = "btn btn-primary";
+                        btn.innerHTML = "Edit";
+                        btn.onclick = () => {
+                            console.log("/edit?nickname=" + data["nickname"]);
+                            window.location.href = "/edit?nickname=" + data["nickname"];
+                        }
+                        cell.appendChild(btn);
                     }
                 }
             } else if ( result.status == "401" ) {

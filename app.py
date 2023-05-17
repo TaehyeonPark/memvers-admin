@@ -22,6 +22,7 @@ from inmemorydb import Redi
 from database import SessionLocal, engine, get_db
 from util import *
 from session import *
+from error_template import error_template
 
 app = FastAPI()
 app.mount("/assets", StaticFiles(directory="templates/assets"), name="assets")
@@ -32,23 +33,31 @@ redi = Redi(host="localhost", port=6379, db=0)
 @app.get("/index", include_in_schema=False)
 async def root(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("index.html", {"request": request})
+
 @app.get("/login", include_in_schema=False)
 async def login(request: Request):
     return RedirectResponse(url="/") if IsUUIDValid(request, redi) else Jinja2Templates(directory="templates").TemplateResponse("login.html", {"request": request})
-@app.get("/memvers", include_in_schema=False)
-async def memvers(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("memvers.html", {"request": request})
-@app.get("/ldap", include_in_schema=False)
-async def _ldap(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("ldap.html", {"request": request})
-@app.get("/register", include_in_schema=False)
-async def register(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request})
 
 @app.get("/logout", include_in_schema=False)
 async def logout(request: Request):
     redi.delete(request.client.host)
     return RedirectResponse(url="/login", status_code=302)
+
+@app.get("/memvers", include_in_schema=False)
+async def memvers(request: Request):
+    return Jinja2Templates(directory="templates").TemplateResponse("memvers.html", {"request": request})
+
+@app.get("/ldap", include_in_schema=False)
+async def _ldap(request: Request):
+    return Jinja2Templates(directory="templates").TemplateResponse("ldap.html", {"request": request})
+
+@app.get("/register", include_in_schema=False)
+async def register(request: Request):
+    return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request})
+
+@app.get("/edit")
+async def edit(request: Request, nickname: str = None, db: Session = Depends(get_db)):
+    return Jinja2Templates(directory="templates").TemplateResponse("edit.html", {"request": request}) if nickname != None else RedirectResponse(url="/memvers", status_code=302)
 
 @app.post("/login")
 async def login(request: Request):
@@ -95,6 +104,11 @@ async def register(request: Request, db: Session = Depends(get_db)):
     else:
         return {"status": "400", "msg": "Bad Request"}
 
+@app.post("/edit")
+async def edit(request: Request, db: Session = Depends(get_db)):
+    formData = await request.form()
+    return {"status": "200", "msg": "success"}
+
 @app.middleware("http")
 async def session_managing_middleware(request: Request, call_next):
     response = await call_next(request)
@@ -114,6 +128,14 @@ async def not_found(request: Request, exc: Exception):
 @app.exception_handler(500)
 async def internal_server_error_handler(request: Request, exc: Exception):
     return Jinja2Templates(directory="templates").TemplateResponse("500.html", {"request": request})
+
+@app.exception_handler(401)
+async def unauthorized_handler(request: Request, exc: Exception):
+    return RedirectResponse(url="/login", status_code=302)
+
+@app.exception_handler(422)
+async def unprocessable_entity_handler(request: Request, exc: Exception):
+    return HTMLResponse(content=error_template(error_code=422, title="Unprocessable Entity", desc="The request was well-formed but was unable to be followed due to semantic errors.", redirect_url="/", redirect_desc="Go to index page"), status_code=422)
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=8001)
