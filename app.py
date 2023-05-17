@@ -16,7 +16,6 @@ import uuid
 from json import loads, dumps
 from typing import Optional, List, Dict, Any
 
-from model import Login
 import models, schema, crud_admin
 import ldap
 from inmemorydb import Redi
@@ -32,97 +31,21 @@ redi = Redi(host="localhost", port=6379, db=0)
 @app.get("/", include_in_schema=False)
 @app.get("/index", include_in_schema=False)
 async def root(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("index.html", {"request": request}) if IsUUIDValid(request, redi) else RedirectResponse(url="/login")
-
+    return Jinja2Templates(directory="templates").TemplateResponse("index.html", {"request": request})
 @app.get("/login", include_in_schema=False)
-async def root(request: Request):
-    if IsUUIDValid(request, redi):
-        return RedirectResponse(url="/")
+async def login(request: Request):
     return RedirectResponse(url="/") if IsUUIDValid(request, redi) else Jinja2Templates(directory="templates").TemplateResponse("login.html", {"request": request})
-
 @app.get("/memvers", include_in_schema=False)
 async def memvers(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("memvers.html", {"request": request}) if IsUUIDValid(request, redi) else RedirectResponse(url="/login")
-
+    return Jinja2Templates(directory="templates").TemplateResponse("memvers.html", {"request": request})
 @app.get("/ldap", include_in_schema=False)
-async def _ldap(request: Request, __uuid: Optional[str] = None):
-    return Jinja2Templates(directory="templates").TemplateResponse("ldap.html", {"request": request}) if IsUUIDValid(request, redi) else RedirectResponse(url="/login")
-
+async def _ldap(request: Request):
+    return Jinja2Templates(directory="templates").TemplateResponse("ldap.html", {"request": request})
 @app.get("/register", include_in_schema=False)
 async def register(request: Request):
-    return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request}) if IsUUIDValid(request, redi) else RedirectResponse(url="/login")
+    return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request})
 
-@app.get("/search")
-async def memvers(request: Request, db: Session = Depends(get_db)):
-    """
-    # TODO: Implement authentication
-    """
-    # if not redi.exist(key=request.client.host):
-    if not IsUUIDValid(request, redi):
-        # return RedirectResponse(url="/login", status_code=302)
-        return {"status": "401", "msg": "Invalid uuid. Session timeout."}
-    params = request.query_params
-    content = params.get("content")
-    column = params.get("column")
-    mode = params.get("mode")
-    rtn = crud_admin.search(db=db, table='nugu', key=column, data=content, mode=mode)
-    if type(rtn) == list:
-        print("list")
-        # rtn = dumps(rtn)
-        # print(rtn)
-        return {"status": "200", "data": rtn}
-    else:
-        print("dict")
-        return {"status": "400", "msg": "Bad Request"}
 
-# @app.post("/search")
-# async def memvers(request: Request, db: Session = Depends(get_db)):
-#     """
-#     # TODO: Implement authentication
-#     """
-#     # if not redi.exist(key=request.client.host):
-#     if not IsUUIDValid(request, redi):
-#         return JSONResponse(content={"status": "401", "msg": "Invalid uuid. Session timeout."}, status_code=401, status=401)
-#     formData = await request.form()
-#     content = formData.get("content")
-#     column = formData.get("column")
-#     mode = formData.get("mode")
-    
-#     rtn = crud_admin.search(db=db, table='nugu', key=column, data=content, mode=mode)
-#     print(rtn)
-#     if type(rtn) == list:
-#         return JSONResponse(content={"status": "200", "data": rtn}, status_code=200)
-#     else:
-#         return JSONResponse(content={"status": "200", "data": ""}, status_code=200)
-        
-"""
-# Register both LDAP and Nugu DB
-"""
-@app.post("/register")
-async def register(request: Request, db: Session = Depends(get_db)):
-    formData = await request.form()
-    if formData.get("nickname") == None or formData.get("nickname") == "":
-        return {"status": "failed", "data": "nickname is None"}
-    if formData.get("pw") == None or formData.get("pw") == "":  # TODO: Implement password policy
-        return {"status": "failed", "data": "pw is None"}       # Password double check will not be implemented
-    
-    _keys = models.get_keys_from_table(table='nugu')
-    _types = models.get_types_from_table(table='nugu')
-
-    _data = {}
-
-    for _key in _keys:
-        print(_types[_key])
-        
-        if formData.get(_key) == None or formData.get(_key) == "":
-            _data[_key] = models.yield_default_value_type_by_key(table='nugu', key=_key)
-        else:
-            _data[_key] = formData.get(_key)
-
-    if ldap.add(un=formData.get("nickname"), pw=formData.get("pw")) and crud_admin.insert(db=db, table='nugu', data=_data):
-        return HTMLResponse(content="<script>alert('Successfully added.');location.href='/register';</script>", status_code=200)
-    return {"status": "failed", "data": "faild to add user"}
- 
 @app.post("/login")
 async def login(request: Request):
     __formData = await request.form()
@@ -134,6 +57,49 @@ async def login(request: Request):
         return _response
     else:
         return JSONResponse(content={"result": "failed"})
+
+@app.get("/search")
+async def memvers(request: Request, db: Session = Depends(get_db)):
+    """
+    # TODO: Implement authentication
+    """
+    params = request.query_params
+    rtn = crud_admin.search(db=db, table='nugu', key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
+    if type(rtn) == list:
+        return {"status": "200", "data": rtn}
+    else:
+        return {"status": "400", "msg": "Bad Request"}
+        
+"""
+# Register both LDAP and Nugu DB
+"""
+@app.post("/register")
+async def register(request: Request, db: Session = Depends(get_db)):
+    formData = await request.form()
+    if ldap.bind(formData.get("id"), formData.get("pw")):
+        return {"status": "400", "msg": "Already exist"}
+    
+    data = dict(formData) # through register, pw comes with.
+    del data['pw'] # delete pw from data as it is not in nugu table.
+    
+    for key in models.get_keys_from_table(table='nugu'):
+        if key not in data.keys():
+            data[key] = models.yield_default_value_type_by_key(table='nugu', key=key)
+        data[key] = models.type_casting_by_table(table='nugu', key=key, data=data[key])
+    if crud_admin.insert(db=db, table='nugu', data=data):
+        return {"status": "200", "msg": "success"}
+    else:
+        return {"status": "400", "msg": "Bad Request"}
+
+@app.middleware("http")
+async def session_managing_middleware(request: Request, call_next):
+    response = await call_next(request)
+    if "/assets" in request.url.path:
+        return response
+    if not IsUUIDValid(request, redi) and request.url.path != "/login":
+        print("[NOTI] Invalid UUID")
+        return RedirectResponse(url="/login", status_code=302)
+    return response
 
 @app.exception_handler(404)
 async def not_found(request: Request, exc: Exception):

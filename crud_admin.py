@@ -32,15 +32,14 @@ def insert(db: Session, table: str = None, data: Dict = None):
     try:
         if table == "achivement":
             if _achivement_duplicate_check(db=db, data=data):
-                return False#, {"status": 400, "message": f"REQ | {table} | Already exist"}
-        print(f"INSERT INTO {table} VALUES {tuple(data.values())}")
-        rtn, msg = _execute(db=db, query=text(f"INSERT INTO {table} VALUES {tuple(data.values())}"))
-        print(msg)
+                return False
+        sorted_data = {}
+        for key in models.get_keys_from_table(table=table):
+            sorted_data[key] = data[key]
+        rtn, msg = _execute(db=db, query=text(f"INSERT INTO {table} VALUES {tuple(sorted_data.values())}"))
         return rtn
-        # return msg if rtn else {"status": 500, "message": f"REQ | {table} | {msg}"}
     except Exception as e:
         return False
-        # return {"status": 500, "message": f"REQ | {table} | {e}"}
     finally:
         db.close()
 
@@ -67,10 +66,7 @@ def search(db: Session, table: str = 'nugu', key: str = PK, data: str = None, mo
         if mode == "AND":
             cursor = db.execute(text(f"SELECT * FROM {table} WHERE {' AND '.join(data)} ORDER BY {PK}"))
         elif mode == "OR":
-            print(data)
-            print(f"SELECT * FROM {table} WHERE {key} LIKE '%{data}%' ORDER BY {PK}")
             cursor = db.execute(text(f"SELECT * FROM {table} WHERE {key} LIKE '%{data}%' ORDER BY {PK}"))
-            # cursor = db.execute(text(f"SELECT * FROM {table} WHERE {data} ORDER BY {PK}"))
         elif mode == "XOR":
             cursor = db.execute(text(f"SELECT * FROM {table} WHERE {' XOR '.join(data)} ORDER BY {PK}"))
         elif mode == "NOT":

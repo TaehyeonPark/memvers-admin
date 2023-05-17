@@ -64,7 +64,7 @@ async def uids():
     else:
         return [int(s.strip()) for s in result.stdout.replace('uidNumber: ', '').split('\n')]
 
-def add(un, pw):
+def add(un: str, pw: str, conn: ldap3.Connection):
     command = 'ldapadd'
     if bind(un, pw):
         return False
@@ -73,6 +73,7 @@ def add(un, pw):
         # TODO: add user to ldap
         # INFO: Not implemented yet
         """
+        conn.add(ldif(un, uids()))
         return True
 
 def delete(un):

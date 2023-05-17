@@ -9,3 +9,5 @@ def IsUUIDValid(request : Request, redi : Redi) -> bool:
         return False
     return True if (redi.exist(key=request.client.host) and redi.get(key=request.client.host).decode("utf-8")) == __uuid else False
 
+def IsRequestedURLValid(request : Request, redi : Redi) -> bool:
+    pass

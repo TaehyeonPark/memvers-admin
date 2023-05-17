@@ -77,15 +77,7 @@ class Project():
 ORMS = [Nugu, Footprint, Achivement, Stack, Outlink, Project]
 ORMS_DICT = {ORM.__tablename__ : ORM for ORM in ORMS}
 TABLES = [table.__tablename__ for table in ORMS]
-# TABLES = ['nugu', 'footprint', 'achivement', 'stack', 'outlink']
 KEYS = [{ORM.__tablename__ : [key for key in ORM.__dict__.keys() if not key.startswith('_')]} for ORM in ORMS]
-# KEYS = [
-#   {'nugu': ['nickname', 'studentId', 'email', 'phoneNum', 'manager', 'dongbang', 'birthday', 'developer', 'designer', 'wheel', 'rnk', 'hide']},
-#   {'footprint': ['nickname', 'history', 'joinDate', 'project', 'pm', 'promotion']},
-#   {'achivement': ['nickname', 'content']}, {'stack': ['nickname', 'stackName']},
-#   {'outlink': ['nickname', 'outLink']},
-#   {'project': ['nickname', 'project', 'current']}
-# ]
 TYPES = [{ORM.__tablename__ : ORM.__type__()} for ORM in ORMS]
 
 
@@ -105,5 +97,33 @@ def yield_default_value_type_by_key(table : str, key : str) -> type:
         return 0.0
     elif __type == bool:
         return False
+    else:
+        return None
+    
+def type_casting_by_table(table: str, key: str, data) -> type:
+    __type = get_types_from_table(table)[key]
+    if __type == str:
+        return str(data)
+    elif __type == int:
+        return int(data)
+    elif __type == float:
+        return float(data)
+    elif __type == bool:
+        if type(data) == str:
+            if 'false' in data.lower():
+                return False
+            elif 'true' in data.lower():
+                return True
+        elif type(data) == int:
+            if data == 0:
+                return False
+            elif data == 1:
+                return True
+        elif type(data) == bool:
+            return data
+        elif type(data) == None:
+            return False
+        else:
+            return None
     else:
         return None
