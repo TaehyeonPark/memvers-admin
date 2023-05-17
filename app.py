@@ -45,6 +45,10 @@ async def _ldap(request: Request):
 async def register(request: Request):
     return Jinja2Templates(directory="templates").TemplateResponse("register.html", {"request": request})
 
+@app.get("/logout", include_in_schema=False)
+async def logout(request: Request):
+    redi.delete(request.client.host)
+    return RedirectResponse(url="/login", status_code=302)
 
 @app.post("/login")
 async def login(request: Request):
@@ -95,6 +99,8 @@ async def register(request: Request, db: Session = Depends(get_db)):
 async def session_managing_middleware(request: Request, call_next):
     response = await call_next(request)
     if "/assets" in request.url.path:
+        return response
+    if request.url.path == "/login":
         return response
     if not IsUUIDValid(request, redi) and request.url.path != "/login":
         print("[NOTI] Invalid UUID")
