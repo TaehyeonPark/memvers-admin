@@ -77,11 +77,13 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
     # TODO: Implement authentication
     """
     params = request.query_params
-    rtn = crud_admin.search(db=db, table='nugu', key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
+
+    rtn = crud_admin.search(db=db, table=params.get("table"), key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
     if type(rtn) == list:
-        return {"status": "200", "data": rtn}
+        print(rtn)
+        return JSONResponse(content={"status": "200", "msg": "success", "data": rtn})
     else:
-        return {"status": "400", "msg": "Bad Request"}
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
         
 """
 # Register both LDAP and Nugu DB
@@ -90,7 +92,7 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
 async def register(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
     if ldap.bind(formData.get("id"), formData.get("pw")):
-        return {"status": "400", "msg": "Already exist"}
+        return JSONResponse(content={"status": "400", "msg": "Already exist"})
     
     data = dict(formData) # through register, pw comes with.
     del data['pw'] # delete pw from data as it is not in nugu table.
@@ -100,14 +102,14 @@ async def register(request: Request, db: Session = Depends(get_db)):
             data[key] = models.yield_default_value_type_by_key(table='nugu', key=key)
         data[key] = models.type_casting_by_table(table='nugu', key=key, data=data[key])
     if crud_admin.insert(db=db, table='nugu', data=data):
-        return {"status": "200", "msg": "success"}
+        return JSONResponse(content={"status": "200", "msg": "success"})
     else:
-        return {"status": "400", "msg": "Bad Request"}
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
 @app.post("/edit")
 async def edit(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
-    return {"status": "200", "msg": "success"}
+    return JSONResponse(content={"status": "200", "msg": "success"})
 
 @app.middleware("http")
 async def session_managing_middleware(request: Request, call_next):
@@ -117,7 +119,6 @@ async def session_managing_middleware(request: Request, call_next):
     if request.url.path == "/login":
         return response
     if not IsUUIDValid(request, redi) and request.url.path != "/login":
-        print("[NOTI] Invalid UUID")
         return RedirectResponse(url="/login", status_code=302)
     return response
 

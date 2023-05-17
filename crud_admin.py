@@ -59,12 +59,15 @@ def update(db: Session, table: str = None, data: Dict = None): # Needed: Differe
     finally:
         db.close()
 
-def search(db: Session, table: str = 'nugu', key: str = PK, data: str = None, mode: str = "OR") -> Dict:
+def search(db: Session, table: str = None, key: str = PK, data: str = None, mode: str = "OR") -> Dict:
     try:
         rtn = []
         cursor = None
-        if mode == "AND":
-            cursor = db.execute(text(f"SELECT * FROM {table} WHERE {' AND '.join(data)} ORDER BY {PK}"))
+        if mode == "EXACT":
+            cursor = db.execute(text(f"SELECT * FROM {table} WHERE {key}='{data}' ORDER BY {PK}"))
+        elif mode == "AND":
+            __constraints = [f"{key}='{value}'" for key, value in data.items() if value != None and value != '']
+            cursor = db.execute(text(f"SELECT * FROM {table} WHERE {' AND '.join(__constraints)} ORDER BY {PK}"))
         elif mode == "OR":
             cursor = db.execute(text(f"SELECT * FROM {table} WHERE {key} LIKE '%{data}%' ORDER BY {PK}"))
         elif mode == "XOR":

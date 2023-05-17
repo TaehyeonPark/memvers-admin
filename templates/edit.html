@@ -124,42 +124,60 @@
                     </div>
                 </nav>
                 <div class="container-fluid">
-                    <h3 class="text-dark mb-4">Memvers edit</h3>
+                    <h3 class="text-dark mb-4" id="memversTitle">Memvers {} edit</h3>
                     <div class="card shadow">
                         <div class="card-header py-3">
-                            <p class="text-primary m-0 fw-bold">Memvers Nugu</p>
+                            <div class="w-50 float-lg-start">
+                                <p class="text-primary m-0 fw-bold">Memvers Nugu</p>
+                            </div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;nugu&quot;);">Edit</button></div>
                         </div>
-                        <div class="card-body"></div>
-                        <div class="card shadow">
-                            <div class="card-header py-3">
+                        <div class="card-body" id="nugu" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <div class="w-50 float-lg-start">
                                 <p class="text-primary m-0 fw-bold">Memvers Achivement</p>
                             </div>
-                            <div class="card-body"></div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;achivement&quot;);">Edit</button></div>
                         </div>
-                        <div class="card shadow">
-                            <div class="card-header py-3">
+                        <div class="card-body" id="achivement" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <div class="w-50 float-lg-start">
                                 <p class="text-primary m-0 fw-bold">Memvers Footprint</p>
                             </div>
-                            <div class="card-body"></div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;footprint&quot;);">Edit</button></div>
                         </div>
-                        <div class="card shadow">
-                            <div class="card-header py-3">
+                        <div class="card-body" id="footprint" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <div class="w-50 float-lg-start">
                                 <p class="text-primary m-0 fw-bold">Memvers Project</p>
                             </div>
-                            <div class="card-body"></div>
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <p class="text-primary m-0 fw-bold">Memvers Stack</p>
-                                </div>
-                                <div class="card-body"></div>
-                            </div>
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <p class="text-primary m-0 fw-bold">Memvers Outlink</p>
-                                </div>
-                                <div class="card-body"></div>
-                            </div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;project&quot;);">Edit</button></div>
                         </div>
+                        <div class="card-body" id="project" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <div class="w-50 float-lg-start">
+                                <p class="text-primary m-0 fw-bold">Memvers Stack</p>
+                            </div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;stack&quot;);">Edit</button></div>
+                        </div>
+                        <div class="card-body" id="stack" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <div class="w-50 float-lg-start">
+                                <p class="text-primary m-0 fw-bold">Memvers Outlink</p>
+                            </div>
+                            <div class="w-50 float-lg-end"><button class="btn btn-primary" type="button" style="float: right;" onclick="FetchDataFromDB(&quot;outlink&quot;);">Edit</button></div>
+                        </div>
+                        <div class="card-body" id="outlink" onload="onLoadFetchData(&quot;nugu&quot;);"></div>
                     </div>
                 </div>
             </div>
