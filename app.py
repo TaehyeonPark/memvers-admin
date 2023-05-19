@@ -79,8 +79,9 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
     params = request.query_params
 
     rtn = crud_admin.search(db=db, table=params.get("table"), key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
+    print(rtn)
+    
     if type(rtn) == list:
-        print(rtn)
         return JSONResponse(content={"status": "200", "msg": "success", "data": rtn})
     else:
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
