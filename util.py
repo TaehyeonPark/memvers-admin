@@ -49,3 +49,7 @@ def _make_like_constraints(data: dict = None):
     except Exception as e:
         return {"status": 500, "message": f"REQ | achievement | {e}"}
 
+def is_null(data):
+    if data == None or data == '':
+        return True
+    return False

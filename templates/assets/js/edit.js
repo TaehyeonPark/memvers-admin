@@ -52,3 +52,17 @@ function DeleteDataFromDB(table, id){
         }
     });
 }
+
+
+/**
+ * @returns {void}
+ * @description Close editor
+ * @example OnClickCloseEditor();
+ */
+function OnClickCloseEditor() {
+    let editor = document.getElementById("editor");
+    editor.style.display = "none";
+    editor.classList.remove("show");
+    let body = document.getElementsByTagName("body")[0];
+    body.style.overflow = "auto";
+}

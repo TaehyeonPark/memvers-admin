@@ -52,9 +52,11 @@ async def passwdByAdmin(un, npass):
     if un and npass:
         result = await e([command] + host + admin + adminPass + newPassword(npass) + ['-S'] + dnOnly(un))
         if result.returncode != 0 or len(result.stdout) != 0 or len(result.stderr) != 0:
-            raise Exception({'command': command, 'err': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr})
+            print(Exception({'command': command, 'err': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr}))
+            # raise Exception({'command': command, 'err': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr})
     else:
-        raise Exception({'command': command, 'un': un, 'npass': npass})
+        print(Exception({'command': command, 'un': un, 'npass': npass}))
+        # raise Exception({'command': command, 'un': un, 'npass': npass})
 
 async def uids():
     command = 'ldapsearch'
@@ -109,7 +111,28 @@ def bind(un, pw):
         conn = ldap3.Connection(server, dn, pw, auto_bind=True)
         return True
     except ldap3.core.exceptions.LDAPBindError as e:
-        # print(e)
+        return False
+
+def IsWheel(un, pw) -> bool:
+    dn = f'cn=wheel,ou=Group,dc=sparcs,dc=org'
+    try:
+        server = ldap3.Server(host=ldapHost, get_info=ldap3.ALL)
+        conn = ldap3.Connection(server, dn, pw, auto_bind=True)
+        conn.search('cn=wheel,ou=Group,dc=sparcs,dc=org', '(objectclass=posixGroup)', attributes=['memberUid'])
+        if un in conn.entries[0]['memberUid']:
+            return True
+        return False
+    except ldap3.core.exceptions.LDAPBindError as e:
+        return False
+def IsAdmin(pw) -> bool:
+    dn = f'cn=admin,dc=sparcs,dc=org'
+    server = ldap3.Server(host=ldapHost, get_info=ldap3.ALL)
+    conn = None
+    try:
+        conn = ldap3.Connection(server, dn, pw, auto_bind=True)
+        return True
+    except ldap3.core.exceptions.LDAPBindError as e:
+        print(e)
         return False
 
 if __name__ == "__main__":
@@ -117,15 +140,4 @@ if __name__ == "__main__":
     address = 'ldap.sparcs.org'
     un = input('Username: ')
     pw = getpass('Password: ')
-    dn = f'uid={un},ou=People,dc=sparcs,dc=org'
-    server = ldap3.Server(address, get_info=ldap3.ALL)
-    conn = None
-    try:
-        conn = ldap3.Connection(server, dn, pw, auto_bind=True)
-    except ldap3.core.exceptions.LDAPBindError as e:
-        print(e)
-        exit(1)
-    
-    conn.search('ou=People,dc=sparcs,dc=org', '(objectclass=posixAccount)', attributes=['uidNumber'])
-
-    print(conn.entries[0]['uidNumber'])
+    print(IsAdmin(pw))

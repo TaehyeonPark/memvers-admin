@@ -20,10 +20,7 @@ class Nugu(BaseModel):
 class Footprint(BaseModel):
     nickname: str
     history: str
-    joinDate: bool
-    project: str
-    pm: str
-    promotion: str
+    content: str
 
 class Achievement(BaseModel):
     nickname: str
@@ -31,11 +28,11 @@ class Achievement(BaseModel):
 
 class Stack(BaseModel):
     nickname: str
-    stackName: str
+    stack: str
 
 class Outlink(BaseModel):
     nickname: str
-    outLink: str
+    outlink: str
 
 class Project(BaseModel):
     nickname: str

@@ -62,7 +62,7 @@ async def edit(request: Request, nickname: str = None, db: Session = Depends(get
 @app.post("/login")
 async def login(request: Request):
     __formData = await request.form()
-    if ldap.bind(__formData.get("id"), __formData.get("pw")):
+    if ldap.bind(__formData.get("id"), __formData.get("pw")) and (ldap.IsWheel(__formData.get("id"), __formData.get("pw")) or ldap.IsAdmin(__formData.get("pw"))):
         __uuid = uuid.uuid4().hex
         redi.set(request.client.host, __uuid, ex=60*60)
         _response = JSONResponse(content={"result": "success"})
@@ -77,9 +77,7 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
     # TODO: Implement authentication
     """
     params = request.query_params
-    print(params)
     rtn = crud_admin.search(db=db, table=params.get("table"), key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
-    print(rtn)
     if type(rtn) == list:
         return JSONResponse(content={"status": "200", "msg": "success", "data": rtn})
     else:
@@ -91,6 +89,7 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
 @app.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
+    print(formData)
     if ldap.bind(formData.get("id"), formData.get("pw")):
         return JSONResponse(content={"status": "400", "msg": "Already exist"})
     
@@ -122,12 +121,28 @@ async def add(request: Request, db: Session = Depends(get_db)):
 @app.post("/edit")
 async def edit(request: Request, db: Session = Depends(get_db)):
     jsondata = await request.json()
-    print(jsondata)
+    oldcontents = jsondata['oldcontents']
+    newcontents = jsondata['newcontents']
+    del jsondata['oldcontents']
+    del jsondata['newcontents']
+    oldcontents['nickname'] = jsondata['nickname']
+    newcontents['nickname'] = jsondata['nickname']
+    
+    print(oldcontents)
+    print(newcontents)
+
     for key in models.get_keys_from_table(table=jsondata['table']):
-        if key not in jsondata.keys():
-            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
-        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
-    if crud_admin.update(db=db, table=jsondata['table'], data=jsondata):
+        if key not in newcontents.keys():
+            newcontents[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
+        newcontents[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=newcontents[key])
+        if key not in oldcontents.keys():
+            oldcontents[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
+        oldcontents[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=oldcontents[key])
+    
+    print(oldcontents)
+    print(newcontents)
+    
+    if crud_admin.edit(db=db, table=jsondata['table'], olddata=oldcontents, newdata=newcontents):
         print("success")
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:

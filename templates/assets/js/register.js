@@ -21,7 +21,7 @@ function onSubmitRegister() {
     formData.append("email", email.value);
     IsNumeric(phoneNum.value) ? formData.append("phoneNum", phoneNum.value) : alert("Phone number is invalid.");
     formData.append("manager", manager.checked);
-    IsBirtdayValid(birthday.value) ? formData.append("birthday", birthday.value) : alert("Birthday is invalid.");
+    if ( birthday.value != "" ) { IsBirtdayValid(birthday.value) ? formData.append("birthday", birthday.value) : alert("Birthday is invalid."); }
     formData.append("developer", developer.checked);
     formData.append("designer", designer.checked);
     formData.append("wheel", wheel.checked);

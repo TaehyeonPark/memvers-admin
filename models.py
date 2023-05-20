@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Boolean, Float, BOOLEAN
 from sqlalchemy.orm import relationship, backref, declarative_base
 
-Base = declarative_base()
+from util import is_null 
 
+Base = declarative_base()
 
 class Nugu(Base):
     __tablename__ = 'nugu'
@@ -27,14 +28,10 @@ class Footprint():
     __tablename__ = 'footprint'
     
     nickname=Column(String(length=20), nullable=not True)
-    history=Column(String(length=100))
-    joinDate=Column(Boolean, default=True, nullable=not True)
-    project=Column(String(length=100))
-    pm=Column(String(length=20))
-    promotion=Column(String(length=40))
-
+    history=Column(String(length=100), nullable=not True)
+    content=Column(String(length=100), nullable=not True)
     def __type__():
-        return {"nickname": str, "history": str, "joinDate": bool, "project": str, "pm": str, "promotion": str}
+        return {"nickname": str, "history": str, "content": str}
     
 class Achievement():
     __tablename__ = 'achievement'
@@ -49,19 +46,19 @@ class Stack():
     __tablename__ = 'stack'
     
     nickname=Column(String(length=20), nullable=not True)
-    stackName=Column(String(length=20), nullable=not True)
+    stack=Column(String(length=20), nullable=not True)
 
     def __type__():
-        return {"nickname": str, "stackName": str}
+        return {"nickname": str, "stack": str}
     
 class Outlink():
     __tablename__ = 'outlink'
 
     nickname=Column(String(length=20), nullable=not True)
-    outLink=Column(String(length=100), nullable=not True)
+    outlink=Column(String(length=100), nullable=not True)
 
     def __type__():
-        return {"nickname": str, "outLink": str}
+        return {"nickname": str, "outlink": str}
 
 class Project():
     __tablename__ = 'project'
@@ -105,9 +102,21 @@ def type_casting_by_table(table: str, key: str, data) -> type:
     if __type == str:
         return str(data)
     elif __type == int:
-        return int(data)
+        if type(data) == str:
+            if data.isdigit():
+                return int(data)
+            else:
+                return 0
+        else:
+            return int(data)
     elif __type == float:
-        return float(data)
+        if type(data) == str:
+            if data.isdigit():
+                return float(data)
+            else:
+                return 0.0
+        else:
+            return float(data)
     elif __type == bool:
         if type(data) == str:
             if 'false' in data.lower():

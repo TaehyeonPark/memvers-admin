@@ -1,10 +1,10 @@
 /**
  * @returns {void}
  */
-function FetchAchievementDataFromDB(){
+function FetchStackDataFromDB(){
     let nickname = location.search.split("=")[1];
-    let container = document.getElementById("achievement");
-    fetch("/search?content=" + nickname + "&column=nickname&table=achievement&mode=EXACT")
+    let container = document.getElementById("stack");
+    fetch("/search?content=" + nickname + "&column=nickname&table=stack&mode=EXACT")
     .then(response => response.json())
     .then(result => {
         console.log(result);
@@ -17,7 +17,6 @@ function FetchAchievementDataFromDB(){
                 th.innerHTML = keys[key];
                 table.appendChild(th);
             }
-
             for ( var i = 0; i < result.data.length; i++ ) {
                 let data = result.data[i];
                 let tr = document.createElement("tr");
@@ -29,18 +28,20 @@ function FetchAchievementDataFromDB(){
                 }
                 let del = document.createElement("button");
                 del.setAttribute("class", "btn btn-primary");
-                del.setAttribute("onclick", "DeleteAchievementDataFromDB('" + data["content"] + "')");
+                del.setAttribute("onclick", "DeleteStackDataFromDB('" + data["stack"] + "')");
                 del.innerHTML = "Delete";
                 let edit = document.createElement("button");
                 edit.setAttribute("class", "btn btn-primary");
                 edit.innerHTML = "Edit";
-                edit.setAttribute("onclick", "OpenAchievementDataEditor('" + data["content"] + "')");
+                edit.setAttribute("onclick", "OpenStackDataEditor('" + data["stack"] + "')");
                 let td = document.createElement("td");
                 td.appendChild(del);
                 td.appendChild(edit);
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
+            
+            // add field name            
             let addtable = document.createElement("table");
             addtable.setAttribute("class", "table table-striped");
             let tr1 = document.createElement("tr");
@@ -48,27 +49,27 @@ function FetchAchievementDataFromDB(){
             td_1_1.setAttribute("class", "w-50")
             let td_1_2 = document.createElement("td");
             td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Achievement"));
+            td_1_1.appendChild(new Text("Stack"));
             tr1.appendChild(td_1_1);
+            addtable.appendChild(tr1);  
 
-            let addachievementinput = document.createElement("input");
-            addachievementinput.setAttribute("id", "addachievementinput");
-            addachievementinput.setAttribute("class", "w-100");
-            addachievementinput.setAttribute("placeholder", "Add achievement");
-            addachievementinput.setAttribute("required", "required");
-            td_1_2.appendChild(addachievementinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-            
+            let addstackinput = document.createElement("input");
+            addstackinput.setAttribute("id", "addstackinput");
+            addstackinput.setAttribute("class", "w-100");
+            addstackinput.setAttribute("placeholder", "Add stack");
+            addstackinput.setAttribute("required", "required");
             let add = document.createElement("button");
             add.setAttribute("class", "btn btn-primary w-100");
             add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddAchievementDataToDB()");
-
+            add.setAttribute("onclick", "AddStackDataToDB()");
+            
+            td_1_2.appendChild(addstackinput);
+            tr1.appendChild(td_1_2);
             container.appendChild(addtable);
             container.appendChild(add);
+
             container.appendChild(table);
-        } else if ( result.status == "200") {
+        } else if ( result.status == "200" ) {
             container.innerHTML = "";
             let addtable = document.createElement("table");
             addtable.setAttribute("class", "table table-striped");
@@ -77,37 +78,37 @@ function FetchAchievementDataFromDB(){
             td_1_1.setAttribute("class", "w-50")
             let td_1_2 = document.createElement("td");
             td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Achievement"));
+            td_1_1.appendChild(new Text("Stack"));
             tr1.appendChild(td_1_1);
-
-            let addachievementinput = document.createElement("input");
-            addachievementinput.setAttribute("id", "addachievementinput");
-            addachievementinput.setAttribute("class", "w-100");
-            addachievementinput.setAttribute("placeholder", "Add achievement");
-            addachievementinput.setAttribute("required", "required");
-            td_1_2.appendChild(addachievementinput);
+            
+            let addstackinput = document.createElement("input");
+            addstackinput.setAttribute("id", "addstackinput");
+            addstackinput.setAttribute("class", "w-100");
+            addstackinput.setAttribute("placeholder", "Add stack");
+            addstackinput.setAttribute("required", "required");
+            td_1_2.appendChild(addstackinput);
             tr1.appendChild(td_1_2);
             addtable.appendChild(tr1);
             
             let add = document.createElement("button");
             add.setAttribute("class", "btn btn-primary w-100");
             add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddAchievementDataToDB()");
-
+            add.setAttribute("onclick", "AddStackDataToDB()");
+            
             container.appendChild(addtable);
             container.appendChild(add);
         }
     });
 }
 
-function AddAchievementDataToDB() {
+function AddStackDataToDB() {
     let nickname = location.search.split("=")[1];
-    let newachievement = document.getElementById("addachievementinput").value;
-    if ( newachievement == "" || newachievement == null ) { alert("Please input achievement."); return; }
+    let newstack = document.getElementById("addstackinput").value;
+    if ( newstack == "" || newstack == null ) { alert("Please input stack."); return; }
     var jsonData = {
-        "table": "achievement",
+        "table": "stack",
         "nickname": nickname,
-        "content": newachievement
+        "stack": newstack
     };
     fetch("/add", {
         method: "POST",
@@ -119,7 +120,7 @@ function AddAchievementDataToDB() {
     .then(response => response.json())
     .then(result => {
         if ( result.status == "200" ) {
-            FetchAchievementDataFromDB();
+            FetchStackDataFromDB();
         }
     });
 }
@@ -129,14 +130,14 @@ function AddAchievementDataToDB() {
  * @param {String} id
  * @returns {void}
  * @description Delete data from DB
- * @example DeleteDataFromDB("achievement", "1");
+ * @example DeleteDataFromDB("stack", "1");
  */
-function DeleteAchievementDataFromDB(content) {
+function DeleteStackDataFromDB(stack) {
     let nickname = location.search.split("=")[1];
     var jsonData = {
-        "table": "achievement",
+        "table": "stack",
         "nickname": nickname,
-        "content": content
+        "stack": stack
     };
     console.log(JSON.stringify(jsonData));
     fetch("/delete", {
@@ -149,20 +150,24 @@ function DeleteAchievementDataFromDB(content) {
     .then(response => response.json())
     .then(result => {
         if ( result.status == "200" ) {
-            FetchAchievementDataFromDB();
+            FetchStackDataFromDB();
+        } else {
+            FetchStackDataFromDB();
         }
     });
 }
 
 
+
+
 /**
- * @param {String} content
+ * @param {String} stack
  * @returns {void}
- * @description Open achievement editor
- * @example OpenAchievementDataEditor("1");
+ * @description Open stack editor
+ * @example OpenStackDataEditor("1");
  */
-function OpenAchievementDataEditor(content) {
-    console.log("content: " + content);
+function OpenStackDataEditor(stack) {
+    console.log("stack: " + stack);
 
     let editor = document.getElementById("editor");
     editor.style.display = "block";
@@ -170,32 +175,32 @@ function OpenAchievementDataEditor(content) {
     let body = document.getElementsByTagName("body")[0];
     body.style.overflow = "hidden";
     let editorsavebtn = document.getElementById("editorsavebtn");
-    editorsavebtn.setAttribute("onclick", "SaveAchievementDataToDB('" + content + "')");
+    editorsavebtn.setAttribute("onclick", "SaveStackDataToDB('" + stack + "')");
 
     let editorbody = document.getElementById("editorbody");
     editorbody.innerHTML = "";
 
     let editorcontainer = document.createElement("div");
-    let newcontent = document.createElement("input");
-    newcontent.setAttribute("id", "editorinput");
-    newcontent.setAttribute("class", "form-text");
-    newcontent.value = content;
-    newcontent.setAttribute("required", "required");
-    newcontent.setAttribute("placeholder", "Edit content");
+    let newstack = document.createElement("input");
+    newstack.setAttribute("id", "editorinput");
+    newstack.setAttribute("class", "form-text");
+    newstack.value = stack;
+    newstack.setAttribute("required", "required");
+    newstack.setAttribute("placeholder", "Edit stack");
 
     let table = document.createElement("table");
     table.setAttribute("class", "table table-striped table-hover");
     let thead = document.createElement("thead");
     let tr = document.createElement("tr");
     let th = document.createElement("th");
-    th.innerHTML = "Content";
+    th.innerHTML = "Stack";
     tr.appendChild(th);
     thead.appendChild(tr);
 
     let tbody = document.createElement("tbody");
     let tr2 = document.createElement("tr");
     let td = document.createElement("td");
-    td.appendChild(newcontent);
+    td.appendChild(newstack);
     tr2.appendChild(td);
     tbody.appendChild(tr2);
 
@@ -206,19 +211,19 @@ function OpenAchievementDataEditor(content) {
 
 }
 
-function SaveAchievementDataToDB(content) {
+function SaveStackDataToDB(stack) {
     let nickname = location.search.split("=")[1];
-    let newcontent = document.getElementById("editorinput").value;
-    if ( newcontent == "" ) {
-        alert("Please fill in the content");
+    let newstack = document.getElementById("editorinput").value;
+    if ( newstack == "" ) {
+        alert("Please fill in the stack");
         return;
     }
 
     var jsonData = {
-        "table": "achievement",
+        "table": "stack",
         "nickname": nickname,
-        "oldcontents": {"content": content},
-        "newcontents": {"content": newcontent}
+        "oldcontents": {"stack": stack},
+        "newcontents": {"stack": newstack}
     };
 
     console.log(JSON.stringify(jsonData));
@@ -233,7 +238,7 @@ function SaveAchievementDataToDB(content) {
     .then(response => response.json())
     .then(result => {
         if ( result.status == "200" ) {
-            FetchAchievementDataFromDB();
+            FetchStackDataFromDB();
             OnClickCloseEditor();
         } else {
             alert("Error: " + result.status + " " + result.msg);
