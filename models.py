@@ -36,8 +36,8 @@ class Footprint():
     def __type__():
         return {"nickname": str, "history": str, "joinDate": bool, "project": str, "pm": str, "promotion": str}
     
-class Achivement():
-    __tablename__ = 'achivement'
+class Achievement():
+    __tablename__ = 'achievement'
 
     nickname=Column(String(length=20), nullable=not True)
     content=Column(String(length=100), nullable=not True)
@@ -74,7 +74,7 @@ class Project():
         return {"nickname": str, "project": str, "current": bool}
 
 
-ORMS = [Nugu, Footprint, Achivement, Stack, Outlink, Project]
+ORMS = [Nugu, Footprint, Achievement, Stack, Outlink, Project]
 ORMS_DICT = {ORM.__tablename__ : ORM for ORM in ORMS}
 TABLES = [table.__tablename__ for table in ORMS]
 KEYS = [{ORM.__tablename__ : [key for key in ORM.__dict__.keys() if not key.startswith('_')]} for ORM in ORMS]

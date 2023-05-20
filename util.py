@@ -18,3 +18,34 @@ def sanitize_nickname(string: str) -> str:
             return string
     except:
         return None
+
+def _make_constraints(data: dict = None):
+    try:
+        __constraints = []
+        for key, value in data.items():
+            if value != None and value != '':
+                if type(value) == str:
+                    __constraints.append(f"{key}='{value}'")
+                elif type(value) == int:
+                    __constraints.append(f"{key}={value}")
+                elif type(value) == bool:
+                    __constraints.append(f"{key}={value}")
+        return __constraints
+    except Exception as e:
+        return {"status": 500, "message": f"REQ | achievement | {e}"}
+
+def _make_like_constraints(data: dict = None):
+    try:
+        __constraints = []
+        for key, value in data.items(): 
+            if value != None and value != '':
+                if type(value) == str:
+                    __constraints.append(f"{key} LIKE '%{value}%'")
+                elif type(value) == int:
+                    __constraints.append(f"{key}={value}")
+                elif type(value) == bool:
+                    __constraints.append(f"{key}={value}")
+        return __constraints
+    except Exception as e:
+        return {"status": 500, "message": f"REQ | achievement | {e}"}
+

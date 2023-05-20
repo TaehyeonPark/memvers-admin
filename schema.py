@@ -25,7 +25,7 @@ class Footprint(BaseModel):
     pm: str
     promotion: str
 
-class Achivement(BaseModel):
+class Achievement(BaseModel):
     nickname: str
     content: str
 
@@ -46,7 +46,7 @@ class INSERT(BaseModel):
     Nugu: Nugu
 
     Footprint: Footprint
-    Achivement: Achivement
+    Achievement: Achievement
     Stack: Stack
     Outlink: Outlink
 
@@ -54,7 +54,7 @@ class INSERT(BaseModel):
 class HELP(BaseModel):
     Nugu: Nugu
     Footprint: Footprint
-    Achivement: Achivement
+    Achievement: Achievement
     Stack: Stack
     Outlink: Outlink
 
@@ -63,4 +63,4 @@ class READ(BaseModel):
     mode: str
 
 
-SCHEMAS = [Nugu, Footprint, Achivement, Stack, Outlink, INSERT]
+SCHEMAS = [Nugu, Footprint, Achievement, Stack, Outlink, INSERT]

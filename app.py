@@ -77,10 +77,9 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
     # TODO: Implement authentication
     """
     params = request.query_params
-
+    print(params)
     rtn = crud_admin.search(db=db, table=params.get("table"), key=params.get("column"), data=params.get("content"), mode=params.get("mode"))
     print(rtn)
-    
     if type(rtn) == list:
         return JSONResponse(content={"status": "200", "msg": "success", "data": rtn})
     else:
@@ -107,10 +106,48 @@ async def register(request: Request, db: Session = Depends(get_db)):
     else:
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
+@app.post("/add")
+async def add(request: Request, db: Session = Depends(get_db)): 
+    jsondata = await request.json()
+    for key in models.get_keys_from_table(table=jsondata['table']):
+        if key not in jsondata.keys():
+            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
+        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
+    print(jsondata)
+    if crud_admin.insert(db=db, table=jsondata['table'], data=jsondata):
+        return JSONResponse(content={"status": "200", "msg": "success"})
+    else:
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
+
 @app.post("/edit")
 async def edit(request: Request, db: Session = Depends(get_db)):
-    formData = await request.form()
-    return JSONResponse(content={"status": "200", "msg": "success"})
+    jsondata = await request.json()
+    print(jsondata)
+    for key in models.get_keys_from_table(table=jsondata['table']):
+        if key not in jsondata.keys():
+            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
+        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
+    if crud_admin.update(db=db, table=jsondata['table'], data=jsondata):
+        print("success")
+        return JSONResponse(content={"status": "200", "msg": "success"})
+    else:
+        print("failed")
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
+
+@app.post("/delete")
+async def delete(request: Request, db: Session = Depends(get_db)):
+    jsondata = await request.json()
+    for key in models.get_keys_from_table(table=jsondata['table']):
+        if key not in jsondata.keys():
+            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
+        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
+    print(jsondata)
+    if crud_admin.delete(db=db, table=jsondata['table'], data=jsondata):
+        print("success")
+        return JSONResponse(content={"status": "200", "msg": "success"})
+    else:
+        print("failed")
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
 @app.middleware("http")
 async def session_managing_middleware(request: Request, call_next):
