@@ -1,7 +1,45 @@
 window.onload = () => {
-    memversTitle = document.getElementById("memversTitle");
+    let memversTitle = document.getElementById("memversTitle");
     memversTitle.innerHTML = memversTitle.innerHTML.replace("{}", "{" + location.search.split("=")[1] + "}");
 }
+
+document.getElementById("ResetPasswordBtn").addEventListener("click", ResetLDAPPassword);
+
+function ResetLDAPPassword(){
+    let nickname = document.getElementById("ldapNickname");
+    let pw = document.getElementById("ldapPassword");
+    let adminpw = prompt("Input admin password");
+    var jsonData = {
+        "nickname": nickname.value,
+        "table": "ldap",
+        "pw": pw.value,
+        "adminpw": adminpw
+    }
+    if ( nickname.value == "" || nickname.value == null ) { alert("Please input nickname."); return; }
+    if ( pw.value == "" || pw.value == null ) { alert("Please input password."); return; }
+    if ( adminpw == "" || adminpw == null ) { alert("Please input admin password."); return; }
+    if ( confirm("Are you sure to reset password?") == false ) { return; }
+    fetch("/edit", {
+        method: "POST",
+        body: JSON.stringify(jsonData),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        if ( result.status == "200" ) {
+            alert("Success to reset password");
+            location.reload();
+        } else {
+            alert("Failed to reset password");
+        }
+    });
+}
+
+
+
 /**
  * @param {String} table
  * @returns {void} 

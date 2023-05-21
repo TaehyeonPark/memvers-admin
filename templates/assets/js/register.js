@@ -1,4 +1,5 @@
 document.write("<script src='/assets/js/validate.js'></script>");
+document.getElementById("nuguregisterbutton").addEventListener("click", onSubmitRegister);
 
 function onSubmitRegister() {
     var nickname = document.getElementById("nickname");
@@ -13,7 +14,9 @@ function onSubmitRegister() {
     var wheel = document.getElementById("wheel");
     var rnk = document.getElementById("rnk");
     var hide = document.getElementById("hide");
-    
+
+    let adminpw = prompt("Please enter admin password to register.", "");
+
     var formData = new FormData();
     IsNicknameValid(nickname.value) ? formData.append("nickname", nickname.value) : alert("Nickname is invalid." + nickname.value);
     IsPasswordValid(pw.value) ? formData.append("pw", pw.value) : alert("Password is invalid.");
@@ -27,7 +30,8 @@ function onSubmitRegister() {
     formData.append("wheel", wheel.checked);
     formData.append("rnk", rnk.options[rnk.selectedIndex].value);
     formData.append("hide", hide.checked);
-
+    formData.append("adminpw", adminpw);
+    
     if ( IsNicknameValid(nickname.value) && IsPasswordValid(pw.value) && IsStudentIDValid(studentId.value) && IsBirtdayValid(birthday.value) ) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/register", true);

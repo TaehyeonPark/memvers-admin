@@ -1,10 +1,40 @@
 document.write("<script src='/assets/js/validate.js'></script>");
 document.getElementById("nugueditbutton").addEventListener("click", OnClickSaveNugu);
-
+document.getElementById("nugudeletebutton").addEventListener("click", OnClickDeleteNugu);
 /**
  * @param {JSON} data
  * @returns {void}
  */
+function OnClickDeleteNugu() {
+    if ( confirm("Are you sure to delete nugu?") == false ) {
+        return;
+    }
+    if ( confirm("The data in other tables will be maintained. Cancel if you forgot to cleanup data.") == false ) {
+        return;
+    }
+    let nickname = location.search.split("=")[1];
+    var jsonData = {
+        "table": "nugu",
+        "nickname": nickname
+    };
+    fetch("/delete", {
+        method: "POST", 
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if ( result.status == "200" ) {
+            alert("Success to delete nugu");
+            location.reload();
+        } else {
+            alert("Failed to delete nugu");
+        }
+    });
+}
+
 function FetchNuguDataFromDB() {
     let nuguform = document.getElementById("nuguform");
     nuguform.setAttribute("style", "display: flex;");

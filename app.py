@@ -62,7 +62,7 @@ async def edit(request: Request, nickname: str = None, db: Session = Depends(get
 @app.post("/login")
 async def login(request: Request):
     __formData = await request.form()
-    if ldap.bind(__formData.get("id"), __formData.get("pw")) and (ldap.IsWheel(__formData.get("id"), __formData.get("pw")) or ldap.IsAdmin(__formData.get("pw"))):
+    if ldap.bind(__formData.get("id"), __formData.get("pw")):# and (ldap.IsWheel(__formData.get("id"), __formData.get("pw")) or ldap.IsAdmin(__formData.get("pw"))):
         __uuid = uuid.uuid4().hex
         redi.set(request.client.host, __uuid, ex=60*60)
         _response = JSONResponse(content={"result": "success"})
@@ -89,17 +89,20 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
 @app.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
-    print(formData)
-    if ldap.bind(formData.get("id"), formData.get("pw")):
+    if ldap.bind(formData.get("nickname"), formData.get("pw")):
         return JSONResponse(content={"status": "400", "msg": "Already exist"})
+    if not ldap.addUser(un=formData.get("nickname"), adminpw=formData.get("adminpw")):
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
     
-    data = dict(formData) # through register, pw comes with.
-    del data['pw'] # delete pw from data as it is not in nugu table.
-    
+    data = dict(formData)# through register, pw comes with. 
+    del data['pw']# delete pw from data as it is not in nugu table.
+    del data['adminpw']# delete adminpw from data as it is not in nugu table.
+
     for key in models.get_keys_from_table(table='nugu'):
         if key not in data.keys():
             data[key] = models.yield_default_value_type_by_key(table='nugu', key=key)
         data[key] = models.type_casting_by_table(table='nugu', key=key, data=data[key])
+    
     if crud_admin.insert(db=db, table='nugu', data=data):
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
@@ -107,57 +110,57 @@ async def register(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/add")
 async def add(request: Request, db: Session = Depends(get_db)): 
-    jsondata = await request.json()
-    for key in models.get_keys_from_table(table=jsondata['table']):
-        if key not in jsondata.keys():
-            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
-        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
-    print(jsondata)
-    if crud_admin.insert(db=db, table=jsondata['table'], data=jsondata):
+    jsonData = await request.json()
+    for key in models.get_keys_from_table(table=jsonData['table']):
+        if key not in jsonData.keys():
+            jsonData[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
+        jsonData[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=jsonData[key])
+    print(jsonData)
+    if crud_admin.insert(db=db, table=jsonData['table'], data=jsonData):
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
 @app.post("/edit")
 async def edit(request: Request, db: Session = Depends(get_db)):
-    jsondata = await request.json()
-    oldcontents = jsondata['oldcontents']
-    newcontents = jsondata['newcontents']
-    del jsondata['oldcontents']
-    del jsondata['newcontents']
-    oldcontents['nickname'] = jsondata['nickname']
-    newcontents['nickname'] = jsondata['nickname']
-    
-    print(oldcontents)
-    print(newcontents)
+    jsonData = await request.json()
 
-    for key in models.get_keys_from_table(table=jsondata['table']):
+    if jsonData['table'] == 'ldap':
+        if ldap.resetPassword(un=jsonData['nickname'], npass=jsonData["pw"], adminpw=jsonData["adminpw"]):
+            return JSONResponse(content={"status": "200", "msg": "success"})
+        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
+
+    oldcontents = jsonData['oldcontents']
+    newcontents = jsonData['newcontents']
+    
+    del jsonData['oldcontents']
+    del jsonData['newcontents']
+    
+    oldcontents['nickname'] = jsonData['nickname']
+    newcontents['nickname'] = jsonData['nickname']
+
+    for key in models.get_keys_from_table(table=jsonData['table']):
         if key not in newcontents.keys():
-            newcontents[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
-        newcontents[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=newcontents[key])
+            newcontents[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
+        newcontents[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=newcontents[key])
         if key not in oldcontents.keys():
-            oldcontents[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
-        oldcontents[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=oldcontents[key])
+            oldcontents[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
+        oldcontents[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=oldcontents[key])
     
-    print(oldcontents)
-    print(newcontents)
-    
-    if crud_admin.edit(db=db, table=jsondata['table'], olddata=oldcontents, newdata=newcontents):
-        print("success")
+    if crud_admin.edit(db=db, table=jsonData['table'], olddata=oldcontents, newdata=newcontents):
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
-        print("failed")
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
 @app.post("/delete")
 async def delete(request: Request, db: Session = Depends(get_db)):
-    jsondata = await request.json()
-    for key in models.get_keys_from_table(table=jsondata['table']):
-        if key not in jsondata.keys():
-            jsondata[key] = models.yield_default_value_type_by_key(table=jsondata['table'], key=key)
-        jsondata[key] = models.type_casting_by_table(table=jsondata['table'], key=key, data=jsondata[key])
-    print(jsondata)
-    if crud_admin.delete(db=db, table=jsondata['table'], data=jsondata):
+    jsonData = await request.json()
+    for key in models.get_keys_from_table(table=jsonData['table']):
+        if key not in jsonData.keys():
+            jsonData[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
+        jsonData[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=jsonData[key])
+    print(jsonData)
+    if crud_admin.delete(db=db, table=jsonData['table'], data=jsonData):
         print("success")
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
