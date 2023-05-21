@@ -5,6 +5,9 @@ window.onload = () => {
 
 document.getElementById("ResetPasswordBtn").addEventListener("click", ResetLDAPPassword);
 
+/**
+ * @returns {void}
+ */
 function ResetLDAPPassword(){
     let nickname = document.getElementById("ldapNickname");
     let pw = document.getElementById("ldapPassword");
@@ -38,8 +41,6 @@ function ResetLDAPPassword(){
     });
 }
 
-
-
 /**
  * @param {String} table
  * @returns {void} 
@@ -56,6 +57,7 @@ function FetchDataFromDB(table){
         }
     });
 }
+
 /**
  * @param {JSON} data
  * @returns {void}
