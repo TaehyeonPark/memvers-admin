@@ -14,7 +14,6 @@ function onSearch(){
     xhr.onreadystatechange = () => {
         if ( xhr.readyState == 4 && xhr.status == 200 ) {
             result = JSON.parse(xhr.responseText);
-            console.log(result);
             if ( result.status == "200" && result.data.length > 0) {
                 var table = document.getElementById("memversTable");
                 table.setAttribute("class", "table table-striped table-bordered");

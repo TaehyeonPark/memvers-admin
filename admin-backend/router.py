@@ -63,6 +63,12 @@ async def edit(request: Request, nickname: str = None, db: Session = Depends(get
 @router.post("/login")
 async def login(request: Request):
     __formData = await request.form()
+    '''
+    데모를 위해 잠시 죽여둔 코드
+    1. 휠 권한 확인
+    2. 어드민 권한 확인
+    *(ldap 로그인은 활성화 되어있음.)
+    '''
     if ldap.bind(__formData.get("id"), __formData.get("pw")):# and (ldap.IsWheel(__formData.get("id"), __formData.get("pw")) or ldap.IsAdmin(__formData.get("pw"))):
         __uuid = uuid.uuid4().hex
         redi.set(request.client.host, __uuid, ex=60*60)
@@ -85,19 +91,23 @@ async def memvers(request: Request, db: Session = Depends(get_db)):
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
         
 """
-# Register both LDAP and Nugu DB
+Register both LDAP and Nugu DB
 """
 @router.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
     formData = await request.form()
     if ldap.bind(formData.get("nickname"), formData.get("pw")):
         return JSONResponse(content={"status": "400", "msg": "Already exist"})
-    if not ldap.addUser(un=formData.get("nickname"), adminpw=formData.get("adminpw")):
-        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
+    '''
+    데모를 위해 잠시 죽여둔 코드
+    어드민 권한 확인
+    '''
+    # if not ldap.addUser(un=formData.get("nickname"), adminpw=formData.get("adminpw")): 
+    #     return JSONResponse(content={"status": "400", "msg": "Bad Request"})
     
-    data = dict(formData)# through register, pw comes with. 
-    del data['pw']# delete pw from data as it is not in nugu table.
-    del data['adminpw']# delete adminpw from data as it is not in nugu table.
+    data = dict(formData)   # through register, pw comes with. 
+    del data['pw']          # delete pw from data as it is not in nugu table.
+    del data['adminpw']     # delete adminpw from data as it is not in nugu table.
 
     for key in models.get_keys_from_table(table='nugu'):
         if key not in data.keys():
@@ -167,30 +177,3 @@ async def delete(request: Request, db: Session = Depends(get_db)):
     else:
         print("failed")
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})
-
-# @router.middleware("http")
-# async def session_managing_middleware(request: Request, call_next):
-#     response = await call_next(request)
-#     if "/assets" in request.url.path:
-#         return response
-#     if request.url.path == "/login":
-#         return response
-#     if not IsUUIDValid(request, redi) and request.url.path != "/login":
-#         return RedirectResponse(url="/login", status_code=302)
-#     return response
-
-# @router.exception_handler(404)
-# async def not_found(request: Request, exc: Exception):
-#     return Jinja2Templates(directory="templates").TemplateResponse("404.html", {"request": request})
-
-# @router.exception_handler(500)
-# async def internal_server_error_handler(request: Request, exc: Exception):
-#     return Jinja2Templates(directory="templates").TemplateResponse("500.html", {"request": request})
-
-# @router.exception_handler(401)
-# async def unauthorized_handler(request: Request, exc: Exception):
-#     return RedirectResponse(url="/login", status_code=302)
-
-# @router.exception_handler(422)
-# async def unprocessable_entity_handler(request: Request, exc: Exception):
-#     return HTMLResponse(content=error_template(error_code=422, title="Unprocessable Entity", desc="The request was well-formed but was unable to be followed due to semantic errors.", redirect_url="/", redirect_desc="Go to index page"), status_code=422)

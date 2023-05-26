@@ -128,10 +128,7 @@ def bind(un, pw) -> bool:
         conn = ldap3.Connection(server, dn, pw, auto_bind=True)
         return True
     except ldap3.core.exceptions.LDAPBindError as e:
-        if e.args[0]['desc'] == 'Invalid credentials':
-            return False
-        else:
-            raise e
+        return False
 
 def IsWheel(un, pw) -> bool:
     dn = f'cn=wheel,ou=Group,dc=sparcs,dc=org'

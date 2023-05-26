@@ -1,6 +1,7 @@
 /**
  * @returns {void}
  */
+
 function FetchOutlinkDataFromDB(){
     let nickname = location.search.split("=")[1];
     let container = document.getElementById("outlink");
@@ -215,10 +216,7 @@ function OpenOutlinkDataEditor(outlink) {
 function SaveOutlinkDataToDB(outlink) {
     let nickname = location.search.split("=")[1];
     let newoutlink = document.getElementById("editorinput").value;
-    if ( newoutlink == "" ) {
-        alert("Please fill in the outlink");
-        return;
-    }
+    if ( newoutlink == "" ) { alert("Please fill in the outlink"); return; }
 
     var jsonData = {
         "table": "outlink",

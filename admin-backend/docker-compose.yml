@@ -1,4 +1,7 @@
 version: '1.0'
+networks:
+  memvers:
+    driver: bridge
 
 services:
   memvers-database:
@@ -11,21 +14,36 @@ services:
       MYSQL_DATABASE: memvers
       MYSQL_USER: wheel
       MYSQL_PASSWORD: 12345678 # change this password
-
-  memvers-admin-cashserver:
-    container_name: memvers-admin-cashserver
-    image: redis:7.0
-    ports:
-      - 6379:6379
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - memvers
   
   memvers-cashserver:
     container_name: memvers-cashserver
     image: redis:7.0
     ports:
       - 6378:6379
+    networks:
+      - memvers
 
+  memvers-admin-front:
+    container_name: memvers-admin-front
+    image: node:16
+    ports:
+      - 3000:3000
+    volumes:
+      - ./admin-front:/app
+    networks:
+      - memvers
+    
   memvers-admin-app:
     container_name: memvers-admin-app
     images: python:3.11.2
     ports:
       - 80:8001
+    volumes:
+      - ./admin-app:/app
+    networks:
+      - memvers
+

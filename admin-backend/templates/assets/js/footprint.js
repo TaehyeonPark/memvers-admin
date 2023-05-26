@@ -1,7 +1,9 @@
 /**
- * @returns {void}
+ * @return {void}
+ * @description Fetch footprint data from DB
+ * @example FetchFootprintDataFromDB();
  */
-function FetchFootprintDataFromDB(){
+function FetchFootprintDataFromDB() {
     let nickname = location.search.split("=")[1];
     let container = document.getElementById("footprint");
     fetch("/search?content=" + nickname + "&column=nickname&table=footprint&mode=EXACT")
@@ -32,7 +34,7 @@ function FetchFootprintDataFromDB(){
                 del.innerHTML = "Delete";
                 let edit = document.createElement("button");
                 edit.setAttribute("class", "btn btn-primary");
-                edit.setAttribute("onclick", "OpenFootprintDataEditor('" + data["history"] + "', " + data["content"] + ")");
+                edit.setAttribute("onclick", "OpenFootprintDataEditor('" + data["history"] + "', '" + data["content"] + "')");
                 edit.innerHTML = "Edit";
                 let td = document.createElement("td");
                 td.appendChild(del);
@@ -134,11 +136,9 @@ function FetchFootprintDataFromDB(){
 }
 
 /**
- * @param {String} history
- * @param {String} content
  * @returns {void}
  * @description Add data to DB
- * @example AddFootprintDataToDB("1", true);  
+ * @example AddFootprintDataToDB();  
  */
 function AddFootprintDataToDB(){
     let nickname = location.search.split("=")[1];
@@ -167,8 +167,8 @@ function AddFootprintDataToDB(){
     });
 }
 /**
- * @param {String} table
- * @param {String} id
+ * @param {String} history
+ * @param {String} content
  * @returns {void}
  * @description Delete data from DB
  * @example DeleteFootprintDataFromDB("1");
@@ -199,6 +199,7 @@ function DeleteFootprintDataFromDB(history, content){
 
 
 /**
+ * @param {String} history
  * @param {String} content
  * @returns {void}
  * @description Open footprint editor
@@ -224,7 +225,7 @@ function OpenFootprintDataEditor(history, content) {
     newhistory.setAttribute("placeholder", "Edit history");
     
     let newcontent = document.createElement("input");
-    newcontent.setAttribute("id", "content");
+    newcontent.setAttribute("id", "footprint-content");
     newcontent.setAttribute("class", "form-text");
     newcontent.value = content;
     newcontent.setAttribute("placeholder", "Edit content");
@@ -257,18 +258,17 @@ function OpenFootprintDataEditor(history, content) {
     editorcontainer.appendChild(table);
     editorbody.appendChild(editorcontainer);
  }
- 
- function SaveFootprintDataToDB(history, content) {
+function SaveFootprintDataToDB(history, content) {
     let nickname = location.search.split("=")[1];
-    let history = document.getElementById("history").value;
-    let content = document.getElementById("content").value;
+    let newhistory = document.getElementById("history").value;
+    let newcontent = document.getElementById("footprint-content").value;
     if ( history == "" || history == null ) { alert("Please input history."); return; }
     if ( content == "" || content == null ) { alert("Please input content."); return; }
     var jsonData = {
         "table": "footprint",
         "nickname": nickname,
         "oldcontents": {"history": history, "content": content},
-        "newcontents": {"history": history, "content": content}
+        "newcontents": {"history": newhistory, "content": newcontent}
     };
 
     console.log(JSON.stringify(jsonData));

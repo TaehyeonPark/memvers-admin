@@ -1,7 +1,4 @@
 document.write("<script src='/assets/js/hashlib.js'></script>");
-let LoginBtn = document.getElementById("LoginBtn");
-LoginBtn.setAttribute("onclick", onClickLogin);
-
 function onClickLogin() {
     var id = document.getElementById("IdInput").value;
     var pw = document.getElementById("PasswordInput").value;
