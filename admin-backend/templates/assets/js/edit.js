@@ -2,9 +2,6 @@ window.onload = () => {
     let memversTitle = document.getElementById("memversTitle");
     memversTitle.innerHTML = memversTitle.innerHTML.replace("{}", "{" + location.search.split("=")[1] + "}");
 }
-
-document.getElementById("ResetPasswordBtn").addEventListener("click", ResetLDAPPassword);
-
 /**
  * @returns {void}
  */

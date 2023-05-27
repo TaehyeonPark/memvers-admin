@@ -29,7 +29,7 @@ def insert(db: Session, table: str = None, data: Dict = None):
         
         if type(read(db=db, table=table, data=sorted_data)) == list and len(read(db=db, table=table, data=sorted_data)) > 0: # duplicate check
             return False
-        print(f"INSERT INTO {table} VALUES {tuple(sorted_data.values())}")
+        # print(f"INSERT INTO {table} VALUES {tuple(sorted_data.values())}")
         rtn, msg = _execute(db=db, query=text(f"INSERT INTO {table} VALUES {tuple(sorted_data.values())}"))
         return rtn
     except Exception as e:
@@ -42,9 +42,8 @@ def delete(db: Session, table: str = None, data: Dict = None):
         sorted_data = {}
         for key in models.get_keys_from_table(table=table):
             sorted_data[key] = data[key]
-        # __constraints = [f"{key}='{value}'" for key, value in sorted_data.items() if value != None and value != '']
         __constraints = util._make_constraints(data=sorted_data)
-        print(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}")
+        # print(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}")
         rtn, msg = _execute(db=db, query=text(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}"))
         return rtn
     except Exception as e:
@@ -57,7 +56,7 @@ def update(db: Session, table: str = None, data: Dict = None): # Needed: Differe
         sorted_data = {}
         for key in models.get_keys_from_table(table=table):
             sorted_data[key] = data[key]
-        print(f"UPDATE {table} SET {', '.join(sorted_data)} WHERE {' AND '.join(util._make_constraints(data=sorted_data))}")
+        # print(f"UPDATE {table} SET {', '.join(sorted_data)} WHERE {' AND '.join(util._make_constraints(data=sorted_data))}")
         rtn, msg = _execute(db=db, query=text(f"UPDATE {table} SET {', '.join(sorted_data)} WHERE {' AND '.join(util._make_constraints(data=sorted_data))}"))
         return msg if rtn else {"status": 500, "message": f"REQ | {table} | {msg}"}
     except Exception as e:
@@ -73,11 +72,8 @@ def edit(db: Session, table: str = None, olddata: dict = None, newdata: dict = N
         oldsorted_data = {}
         for key in models.get_keys_from_table(table=table):
             oldsorted_data[key] = olddata[key]
-        if type(read(db=db, table=table, data=newsorted_data)) == list and len(read(db=db, table=table, data=newsorted_data)) > 0: # duplicate check
-            return False
-        print(f"UPDATE {table} SET {', '.join(util._make_constraints(data=newsorted_data))} WHERE {' AND '.join(util._make_constraints(data=oldsorted_data))}")
+        # print(f"UPDATE {table} SET {', '.join(util._make_constraints(data=newsorted_data))} WHERE {' AND '.join(util._make_constraints(data=oldsorted_data))}")
         rtn, msg = _execute(db=db, query=text(f"UPDATE {table} SET {', '.join(util._make_constraints(data=newsorted_data))} WHERE {' AND '.join(util._make_constraints(data=oldsorted_data))}"))
-        print(rtn, msg)
         return rtn
     except Exception as e:
         return False

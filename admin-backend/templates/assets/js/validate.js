@@ -37,5 +37,5 @@ function IsStudentIDValid(input) {
  * @returns {boolean}
  */
 function IsBirtdayValid(input) {
-    return input == "" ? true : input.length == 8 && IsNumeric(input) && ( Number(input[0] + input[1]) >= 19 ); // TODO: add more rules
+    return input == "" ? true : input.length == 8 && IsNumeric(input) && ( Number(input[0] + input[1]) >= 19 ) && ( Number(input[4] + input[5]) <= 12 ) && ( Number(input[6] + input[7]) <= 31 );
 }

@@ -10,7 +10,6 @@ function FetchFootprintDataFromDB() {
     .then(response => response.json())
     .then(result => {
         if ( result.status == "200" && result.data.length > 0) {
-            container.innerHTML = "";
             let table = document.createElement("table");
             let keys = Object.keys(result.data[0]);
             for ( var key in keys ) {
@@ -42,103 +41,70 @@ function FetchFootprintDataFromDB() {
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("History"));
-            tr1.appendChild(td_1_1);
-            
-            let addhistoryinput = document.createElement("input");
-            addhistoryinput.setAttribute("id", "addhistoryinput");
-            addhistoryinput.setAttribute("class", "w-100");
-            addhistoryinput.setAttribute("placeholder", "Add history");
-            addhistoryinput.setAttribute("required", "required");
-            td_1_2.appendChild(addhistoryinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let tr2 = document.createElement("tr");
-            let td_2_1 = document.createElement("td");
-            td_2_1.setAttribute("class", "w-50")
-            let td_2_2 = document.createElement("td");
-            td_2_2.setAttribute("class", "w-50")
-            let addcontentinput = document.createElement("input");
-            addcontentinput.setAttribute("id", "addcontentinput");
-            addcontentinput.setAttribute("placeholder", "New content");
-            addcontentinput.setAttribute("required", "required");
-            addcontentinput.setAttribute("class", "w-100");
-            td_2_1.appendChild(new Text("New content"));
-            tr2.appendChild(td_2_1);
-            td_2_2.appendChild(addcontentinput);
-            tr2.appendChild(td_2_2);
-            addtable.appendChild(tr2);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddFootprintDataToDB();");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            container.innerHTML = "";
+            CreateNewFootprintInputForm(container);
             container.appendChild(table);
         } else if ( result.status == "200" ) {
             container.innerHTML = "";
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("History"));
-            tr1.appendChild(td_1_1);
-            
-            let addhistoryinput = document.createElement("input");
-            addhistoryinput.setAttribute("id", "addhistoryinput");
-            addhistoryinput.setAttribute("class", "w-100");
-            addhistoryinput.setAttribute("placeholder", "Add history");
-            addhistoryinput.setAttribute("required", "required");
-            td_1_2.appendChild(addhistoryinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let tr2 = document.createElement("tr");
-            let td_2_1 = document.createElement("td");
-            td_2_1.setAttribute("class", "w-50")
-            let td_2_2 = document.createElement("td");
-            td_2_2.setAttribute("class", "w-50")
-            let addcontentinput = document.createElement("input");
-            addcontentinput.setAttribute("id", "addcontentinput");
-            addcontentinput.setAttribute("placeholder", "New content");
-            addcontentinput.setAttribute("required", "required");
-            addcontentinput.setAttribute("class", "w-100");
-            td_2_1.appendChild(new Text("New content"));
-            tr2.appendChild(td_2_1);
-            td_2_2.appendChild(addcontentinput);
-            tr2.appendChild(td_2_2);
-            addtable.appendChild(tr2);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddFootprintDataToDB();");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            CreateNewFootprintInputForm(container);
         }
     });
 }
 
 /**
+ * @param {*} container
+ * @returns {void}
+ * @description Create a new input form for footprint
+ */
+function CreateNewFootprintInputForm(container) {
+    let addtable = document.createElement("table");
+    addtable.setAttribute("class", "table table-striped");
+    
+    let tr1 = document.createElement("tr");
+    let td_1_1 = document.createElement("td");
+    td_1_1.setAttribute("class", "w-50")
+    let td_1_2 = document.createElement("td");
+    td_1_2.setAttribute("class", "w-50")
+    td_1_1.appendChild(new Text("History"));
+    tr1.appendChild(td_1_1);
+    
+    let addhistoryinput = document.createElement("input");
+    addhistoryinput.setAttribute("id", "addhistoryinput");
+    addhistoryinput.setAttribute("class", "w-100");
+    addhistoryinput.setAttribute("placeholder", "Add history");
+    addhistoryinput.setAttribute("required", "required");
+    td_1_2.appendChild(addhistoryinput);
+    tr1.appendChild(td_1_2);
+    addtable.appendChild(tr1);
+
+    let tr2 = document.createElement("tr");
+    let td_2_1 = document.createElement("td");
+    td_2_1.setAttribute("class", "w-50")
+    let td_2_2 = document.createElement("td");
+    td_2_2.setAttribute("class", "w-50")
+    let addcontentinput = document.createElement("input");
+    addcontentinput.setAttribute("id", "addcontentinput");
+    addcontentinput.setAttribute("placeholder", "New content");
+    addcontentinput.setAttribute("required", "required");
+    addcontentinput.setAttribute("class", "w-100");
+    td_2_1.appendChild(new Text("New content"));
+    tr2.appendChild(td_2_1);
+    td_2_2.appendChild(addcontentinput);
+    tr2.appendChild(td_2_2);
+    addtable.appendChild(tr2);
+
+    let add = document.createElement("button");
+    add.setAttribute("class", "btn btn-primary w-100");
+    add.innerHTML = "Add";
+    add.setAttribute("onclick", "AddFootprintDataToDB();");
+
+    container.appendChild(addtable);
+    container.appendChild(add);
+}
+
+/**
  * @returns {void}
  * @description Add data to DB
- * @example AddFootprintDataToDB();  
  */
 function AddFootprintDataToDB(){
     let nickname = location.search.split("=")[1];

@@ -126,7 +126,6 @@ async def add(request: Request, db: Session = Depends(get_db)):
         if key not in jsonData.keys():
             jsonData[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
         jsonData[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=jsonData[key])
-    print(jsonData)
     if crud_admin.insert(db=db, table=jsonData['table'], data=jsonData):
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
@@ -135,7 +134,6 @@ async def add(request: Request, db: Session = Depends(get_db)):
 @router.post("/edit")
 async def edit(request: Request, db: Session = Depends(get_db)):
     jsonData = await request.json()
-
     if jsonData['table'] == 'ldap':
         if ldap.resetPassword(un=jsonData['nickname'], npass=jsonData["pw"], adminpw=jsonData["adminpw"]):
             return JSONResponse(content={"status": "200", "msg": "success"})
@@ -170,10 +168,7 @@ async def delete(request: Request, db: Session = Depends(get_db)):
         if key not in jsonData.keys():
             jsonData[key] = models.yield_default_value_type_by_key(table=jsonData['table'], key=key)
         jsonData[key] = models.type_casting_by_table(table=jsonData['table'], key=key, data=jsonData[key])
-    print(jsonData)
     if crud_admin.delete(db=db, table=jsonData['table'], data=jsonData):
-        print("success")
         return JSONResponse(content={"status": "200", "msg": "success"})
     else:
-        print("failed")
         return JSONResponse(content={"status": "400", "msg": "Bad Request"})

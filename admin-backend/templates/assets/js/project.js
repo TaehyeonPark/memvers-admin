@@ -8,7 +8,6 @@ function FetchProjectDataFromDB(){
     .then(response => response.json())
     .then(result => {
         if ( result.status == "200" && result.data.length > 0) {
-            container.innerHTML = "";
             let table = document.createElement("table");
             let keys = Object.keys(result.data[0]);
             for ( var key in keys ) {
@@ -40,105 +39,70 @@ function FetchProjectDataFromDB(){
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Project"));
-            tr1.appendChild(td_1_1);
-            
-            let addprojectinput = document.createElement("input");
-            addprojectinput.setAttribute("id", "addprojectinput");
-            addprojectinput.setAttribute("class", "w-100");
-            addprojectinput.setAttribute("placeholder", "Add project");
-            addprojectinput.setAttribute("required", "required");
-            td_1_2.appendChild(addprojectinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let tr2 = document.createElement("tr");
-            let td_2_1 = document.createElement("td");
-            td_2_1.setAttribute("class", "w-50")
-            let td_2_2 = document.createElement("td");
-            td_2_2.setAttribute("class", "w-50")
-            let addprojectcurrent = document.createElement("input");
-            addprojectcurrent.setAttribute("placeholder", "Current");
-            addprojectcurrent.setAttribute("type", "checkbox");
-            addprojectcurrent.defaultChecked = true;
-            addprojectcurrent.setAttribute("id", "addprojectcurrent");
-            addprojectcurrent.setAttribute("class", "w-50");
-            td_2_1.appendChild(new Text("Current"));
-            tr2.appendChild(td_2_1);
-            td_2_2.appendChild(addprojectcurrent);
-            tr2.appendChild(td_2_2);
-            addtable.appendChild(tr2);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddProjectDataToDB();");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            container.innerHTML = "";
+            CreateNewProjectInputForm(container);
             container.appendChild(table);
         } else if ( result.status == "200" ) {
             container.innerHTML = "";
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Project"));
-            tr1.appendChild(td_1_1);
-            
-            let addprojectinput = document.createElement("input");
-            addprojectinput.setAttribute("id", "addprojectinput");
-            addprojectinput.setAttribute("class", "w-100");
-            addprojectinput.setAttribute("placeholder", "Add project");
-            addprojectinput.setAttribute("required", "required");
-            td_1_2.appendChild(addprojectinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let tr2 = document.createElement("tr");
-            let td_2_1 = document.createElement("td");
-            td_2_1.setAttribute("class", "w-50")
-            let td_2_2 = document.createElement("td");
-            td_2_2.setAttribute("class", "w-50")
-            let addprojectcurrent = document.createElement("input");
-            addprojectcurrent.setAttribute("placeholder", "Current");
-            addprojectcurrent.setAttribute("type", "checkbox");
-            addprojectcurrent.defaultChecked = true;
-            addprojectcurrent.setAttribute("id", "addprojectcurrent");
-            addprojectcurrent.setAttribute("class", "w-50");
-            td_2_1.appendChild(new Text("Current"));
-            tr2.appendChild(td_2_1);
-            td_2_2.appendChild(addprojectcurrent);
-            tr2.appendChild(td_2_2);
-            addtable.appendChild(tr2);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddProjectDataToDB();");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            CreateNewProjectInputForm(container);
         }
     });
 }
 
 /**
- * @param {String} project
- * @param {Boolean} current
+ * @param {*} container
+ * @returns {void}
+ * @description Create a new input form for project
+ */
+function CreateNewProjectInputForm(container){
+    let addtable = document.createElement("table");
+    addtable.setAttribute("class", "table table-striped");
+    let tr1 = document.createElement("tr");
+    let td_1_1 = document.createElement("td");
+    td_1_1.setAttribute("class", "w-50")
+    let td_1_2 = document.createElement("td");
+    td_1_2.setAttribute("class", "w-50")
+    td_1_1.appendChild(new Text("Project"));
+    tr1.appendChild(td_1_1);
+    
+    let addprojectinput = document.createElement("input");
+    addprojectinput.setAttribute("id", "addprojectinput");
+    addprojectinput.setAttribute("class", "w-100");
+    addprojectinput.setAttribute("placeholder", "Add project");
+    addprojectinput.setAttribute("required", "required");
+    td_1_2.appendChild(addprojectinput);
+    tr1.appendChild(td_1_2);
+    addtable.appendChild(tr1);
+
+    let tr2 = document.createElement("tr");
+    let td_2_1 = document.createElement("td");
+    td_2_1.setAttribute("class", "w-50")
+    let td_2_2 = document.createElement("td");
+    td_2_2.setAttribute("class", "w-50")
+    let addprojectcurrent = document.createElement("input");
+    addprojectcurrent.setAttribute("placeholder", "Current");
+    addprojectcurrent.setAttribute("type", "checkbox");
+    addprojectcurrent.defaultChecked = true;
+    addprojectcurrent.setAttribute("id", "addprojectcurrent");
+    addprojectcurrent.setAttribute("class", "w-50");
+    td_2_1.appendChild(new Text("Current"));
+    tr2.appendChild(td_2_1);
+    td_2_2.appendChild(addprojectcurrent);
+    tr2.appendChild(td_2_2);
+    addtable.appendChild(tr2);
+
+    let add = document.createElement("button");
+    add.setAttribute("class", "btn btn-primary w-100");
+    add.innerHTML = "Add";
+    add.setAttribute("onclick", "AddProjectDataToDB();");
+    container.appendChild(addtable);
+    container.appendChild(add);
+}
+
+
+/**
  * @returns {void}
  * @description Add data to DB
- * @example AddProjectDataToDB("1", true);  
  */
 function AddProjectDataToDB(){
     let nickname = location.search.split("=")[1];

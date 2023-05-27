@@ -1,6 +1,5 @@
 document.write("<script src='/assets/js/validate.js'></script>");
-document.getElementById("nugueditbutton").addEventListener("click", OnClickSaveNugu);
-document.getElementById("nugudeletebutton").addEventListener("click", OnClickDeleteNugu);
+
 /**
  * @param {JSON} data
  * @returns {void}

@@ -1,13 +1,54 @@
+// // @ts-check
+
 window.onload = () => {
-    setTimeout(onSearch, 10);
+    if ( location.pathname == "/memvers" ) { setTimeout(onSearch, 10); }
 }
 
+/**
+ * on Search
+ * @param {Event} e
+ * @returns {void}
+ * @description Global Search
+ */
 function onSearch(){
     var content = document.getElementById("memversSearch").value;
     var columnBox = document.getElementById("memversColumn");
     var column = columnBox.options[columnBox.selectedIndex].value;
-    var xhr = new XMLHttpRequest();
     
+    fetchSearchDataAndShowData(content, column);
+}
+
+
+/**
+ * Global Search
+ * @param {Event} e
+ * @returns {void}
+ * @description Global Search
+ */
+function GlobalOnSearch(){
+    if ( location.pathname != "/memvers" ) { window.location.href = "/memvers"; }
+
+    var content = document.getElementById("GlobalSearchBar").value;
+    var columnBox = document.getElementById("memversColumn");
+    var column = columnBox.options[columnBox.selectedIndex].value;
+
+    fetchSearchDataAndShowData(content, column);
+}
+
+
+/**
+ * @param {number} n
+ * @returns {void}
+ * @description show search count
+ * @example showSearchCount(10);
+ */
+function showSearchCount(n){
+    let dataTable_info = document.getElementById("dataTable_info");
+    dataTable_info.innerHTML = "Showing " + n + " results";
+}
+
+function fetchSearchDataAndShowData(content, column){
+    var xhr = new XMLHttpRequest();
     params = "content=" + content + "&column=" + column + "&table=nugu&mode=OR";
     xhr.open("GET", "/search?" + params);
     xhr.send();
@@ -15,6 +56,7 @@ function onSearch(){
         if ( xhr.readyState == 4 && xhr.status == 200 ) {
             result = JSON.parse(xhr.responseText);
             console.log(result);
+            showSearchCount(result.data.length)
             if ( result.status == "200" && result.data.length > 0) {
                 var table = document.getElementById("memversTable");
                 table.setAttribute("class", "table table-striped table-bordered");

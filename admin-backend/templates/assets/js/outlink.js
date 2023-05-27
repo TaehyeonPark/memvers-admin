@@ -10,7 +10,6 @@ function FetchOutlinkDataFromDB(){
     .then(result => {
         console.log(result);
         if ( result.status == "200" && result.data.length > 0) {
-            container.innerHTML = "";
             let table = document.createElement("table");
             table.setAttribute("class", "table-striped");
             let keys = Object.keys(result.data[0]);
@@ -43,66 +42,53 @@ function FetchOutlinkDataFromDB(){
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Outlink"));
-            tr1.appendChild(td_1_1);
-
-            let addoutlinkinput = document.createElement("input");
-            addoutlinkinput.setAttribute("id", "addoutlinkinput");
-            addoutlinkinput.setAttribute("class", "w-100");
-            addoutlinkinput.setAttribute("placeholder", "Add outlink");
-            addoutlinkinput.setAttribute("required", "required");
-            td_1_2.appendChild(addoutlinkinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddOutlinkDataToDB()");
-            
-            container.appendChild(addtable);
-            container.appendChild(add);
-
+            container.innerHTML = "";
+            CreateNewOutlinkInputForm(container);
             container.appendChild(table);
         } else if ( result.status == "200" ) {
             container.innerHTML = "";
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Outlink"));
-            tr1.appendChild(td_1_1);
-
-            let addoutlinkinput = document.createElement("input");
-            addoutlinkinput.setAttribute("id", "addoutlinkinput");
-            addoutlinkinput.setAttribute("class", "w-100");
-            addoutlinkinput.setAttribute("placeholder", "Add outlink");
-            addoutlinkinput.setAttribute("required", "required");
-            td_1_2.appendChild(addoutlinkinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddOutlinkDataToDB()");
-            
-            container.appendChild(addtable);
-            container.appendChild(add);
+            CreateNewOutlinkInputForm(container);
         }
     });
 }
+/**
+ * @param {*} container
+ * @returns {void}
+ * @description Create a new input form for outlink
+ */
+function CreateNewOutlinkInputForm(container) {
+    let addtable = document.createElement("table");
+    addtable.setAttribute("class", "table table-striped");
+    let tr1 = document.createElement("tr");
+    let td_1_1 = document.createElement("td");
+    td_1_1.setAttribute("class", "w-50")
+    let td_1_2 = document.createElement("td");
+    td_1_2.setAttribute("class", "w-50")
+    td_1_1.appendChild(new Text("Outlink"));
+    tr1.appendChild(td_1_1);
 
+    let addoutlinkinput = document.createElement("input");
+    addoutlinkinput.setAttribute("id", "addoutlinkinput");
+    addoutlinkinput.setAttribute("class", "w-100");
+    addoutlinkinput.setAttribute("placeholder", "Add outlink");
+    addoutlinkinput.setAttribute("required", "required");
+    td_1_2.appendChild(addoutlinkinput);
+    tr1.appendChild(td_1_2);
+    addtable.appendChild(tr1);
+
+    let add = document.createElement("button");
+    add.setAttribute("class", "btn btn-primary w-100");
+    add.innerHTML = "Add";
+    add.setAttribute("onclick", "AddOutlinkDataToDB()");
+    
+    container.appendChild(addtable);
+    container.appendChild(add);
+}
+
+/**
+ * @returns {void}
+ * @description Add data to DB
+ */
 function AddOutlinkDataToDB() {
     let nickname = location.search.split("=")[1];
     let newoutlink = document.getElementById("addoutlinkinput").value;

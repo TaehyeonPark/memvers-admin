@@ -1,6 +1,9 @@
 document.write("<script src='/assets/js/validate.js'></script>");
-document.getElementById("nuguregisterbutton").addEventListener("click", onSubmitRegister);
 
+/**
+ * @param {JSON} data
+ * @returns {void}
+ */
 function onSubmitRegister() {
     var nickname = document.getElementById("nickname");
     var pw = document.getElementById("pw");

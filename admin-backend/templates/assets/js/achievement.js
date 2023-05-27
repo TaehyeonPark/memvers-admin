@@ -10,7 +10,6 @@ function FetchAchievementDataFromDB(){
     .then(result => {
         console.log(result);
         if ( result.status == "200" && result.data.length > 0) {
-            container.innerHTML = "";
             let table = document.createElement("table");
             let keys = Object.keys(result.data[0]);
             for ( var key in keys ) {
@@ -42,65 +41,54 @@ function FetchAchievementDataFromDB(){
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Achievement"));
-            tr1.appendChild(td_1_1);
-
-            let addachievementinput = document.createElement("input");
-            addachievementinput.setAttribute("id", "addachievementinput");
-            addachievementinput.setAttribute("class", "w-100");
-            addachievementinput.setAttribute("placeholder", "Add achievement");
-            addachievementinput.setAttribute("required", "required");
-            td_1_2.appendChild(addachievementinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-            
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddAchievementDataToDB()");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            container.innerHTML = "";
+            CreateNewAchievementInputForm(container);
             container.appendChild(table);
         } else if ( result.status == "200") {
             container.innerHTML = "";
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Achievement"));
-            tr1.appendChild(td_1_1);
-
-            let addachievementinput = document.createElement("input");
-            addachievementinput.setAttribute("id", "addachievementinput");
-            addachievementinput.setAttribute("class", "w-100");
-            addachievementinput.setAttribute("placeholder", "Add achievement");
-            addachievementinput.setAttribute("required", "required");
-            td_1_2.appendChild(addachievementinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-            
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddAchievementDataToDB()");
-
-            container.appendChild(addtable);
-            container.appendChild(add);
+            CreateNewAchievementInputForm(container);
         }
     });
 }
 
+/**
+ * @param {*} container
+ * @returns {void}
+ * @description Create a new input form for achievement
+ */
+function CreateNewAchievementInputForm(container) {
+    let addtable = document.createElement("table");
+    addtable.setAttribute("class", "table table-striped");
+    let tr1 = document.createElement("tr");
+    let td_1_1 = document.createElement("td");
+    td_1_1.setAttribute("class", "w-50")
+    let td_1_2 = document.createElement("td");
+    td_1_2.setAttribute("class", "w-50")
+    td_1_1.appendChild(new Text("Achievement"));
+    tr1.appendChild(td_1_1);
+
+    let addachievementinput = document.createElement("input");
+    addachievementinput.setAttribute("id", "addachievementinput");
+    addachievementinput.setAttribute("class", "w-100");
+    addachievementinput.setAttribute("placeholder", "Add achievement");
+    addachievementinput.setAttribute("required", "required");
+    td_1_2.appendChild(addachievementinput);
+    tr1.appendChild(td_1_2);
+    addtable.appendChild(tr1);
+    
+    let add = document.createElement("button");
+    add.setAttribute("class", "btn btn-primary w-100");
+    add.innerHTML = "Add";
+    add.setAttribute("onclick", "AddAchievementDataToDB()");
+
+    container.appendChild(addtable);
+    container.appendChild(add);
+}
+
+/**
+ * @returns {void}
+ * @description Add data to DB
+ */
 function AddAchievementDataToDB() {
     let nickname = location.search.split("=")[1];
     let newachievement = document.getElementById("addachievementinput").value;

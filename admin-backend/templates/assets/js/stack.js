@@ -9,7 +9,6 @@ function FetchStackDataFromDB(){
     .then(result => {
         console.log(result);
         if ( result.status == "200" && result.data.length > 0) {
-            container.innerHTML = "";
             let table = document.createElement("table");
             let keys = Object.keys(result.data[0]);
             for ( var key in keys ) {
@@ -40,67 +39,53 @@ function FetchStackDataFromDB(){
                 tr.appendChild(td);
                 table.appendChild(tr);
             }
-            
-            // add field name            
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Stack"));
-            tr1.appendChild(td_1_1);
-            addtable.appendChild(tr1);  
-
-            let addstackinput = document.createElement("input");
-            addstackinput.setAttribute("id", "addstackinput");
-            addstackinput.setAttribute("class", "w-100");
-            addstackinput.setAttribute("placeholder", "Add stack");
-            addstackinput.setAttribute("required", "required");
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddStackDataToDB()");
-            
-            td_1_2.appendChild(addstackinput);
-            tr1.appendChild(td_1_2);
-            container.appendChild(addtable);
-            container.appendChild(add);
-
+            container.innerHTML = "";
+            CreateNewStackInputForm(container)
             container.appendChild(table);
         } else if ( result.status == "200" ) {
             container.innerHTML = "";
-            let addtable = document.createElement("table");
-            addtable.setAttribute("class", "table table-striped");
-            let tr1 = document.createElement("tr");
-            let td_1_1 = document.createElement("td");
-            td_1_1.setAttribute("class", "w-50")
-            let td_1_2 = document.createElement("td");
-            td_1_2.setAttribute("class", "w-50")
-            td_1_1.appendChild(new Text("Stack"));
-            tr1.appendChild(td_1_1);
-            
-            let addstackinput = document.createElement("input");
-            addstackinput.setAttribute("id", "addstackinput");
-            addstackinput.setAttribute("class", "w-100");
-            addstackinput.setAttribute("placeholder", "Add stack");
-            addstackinput.setAttribute("required", "required");
-            td_1_2.appendChild(addstackinput);
-            tr1.appendChild(td_1_2);
-            addtable.appendChild(tr1);
-            
-            let add = document.createElement("button");
-            add.setAttribute("class", "btn btn-primary w-100");
-            add.innerHTML = "Add";
-            add.setAttribute("onclick", "AddStackDataToDB()");
-            
-            container.appendChild(addtable);
-            container.appendChild(add);
+            CreateNewStackInputForm(container)
         }
     });
 }
 
+/**
+ * @param {*} container
+ * @returns {void}
+ * @description Create a new input form for stack
+ */
+function CreateNewStackInputForm(container) {
+    let addtable = document.createElement("table");
+    addtable.setAttribute("class", "table table-striped");
+    let tr1 = document.createElement("tr");
+    let td_1_1 = document.createElement("td");
+    td_1_1.setAttribute("class", "w-50")
+    let td_1_2 = document.createElement("td");
+    td_1_2.setAttribute("class", "w-50")
+    td_1_1.appendChild(new Text("Stack"));
+    tr1.appendChild(td_1_1);
+    addtable.appendChild(tr1);  
+
+    let addstackinput = document.createElement("input");
+    addstackinput.setAttribute("id", "addstackinput");
+    addstackinput.setAttribute("class", "w-100");
+    addstackinput.setAttribute("placeholder", "Add stack");
+    addstackinput.setAttribute("required", "required");
+    let add = document.createElement("button");
+    add.setAttribute("class", "btn btn-primary w-100");
+    add.innerHTML = "Add";
+    add.setAttribute("onclick", "AddStackDataToDB()");
+    
+    td_1_2.appendChild(addstackinput);
+    tr1.appendChild(td_1_2);
+    container.appendChild(addtable);
+    container.appendChild(add);
+}
+
+/**
+ * @returns {void}
+ * @description Add data to DB
+ */
 function AddStackDataToDB() {
     let nickname = location.search.split("=")[1];
     let newstack = document.getElementById("addstackinput").value;
