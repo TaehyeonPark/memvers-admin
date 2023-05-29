@@ -53,6 +53,7 @@ async def session_managing_middleware(request: Request, call_next):
     if not IsUUIDValid(request, redi) and request.url.path != "/login":
         return RedirectResponse(url="/login", status_code=302)
     return response
+
 @app.exception_handler(404)
 async def not_found(request: Request, exc: Exception):
     return Jinja2Templates(directory="templates").TemplateResponse("404.html", {"request": request})
