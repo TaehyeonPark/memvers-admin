@@ -43,7 +43,7 @@ def delete(db: Session, table: str = None, data: Dict = None):
         for key in models.get_keys_from_table(table=table):
             sorted_data[key] = data[key]
         __constraints = util._make_constraints(data=sorted_data)
-        # print(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}")
+        print(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}")
         rtn, msg = _execute(db=db, query=text(f"DELETE FROM {table} WHERE {' AND '.join(__constraints)}"))
         return rtn
     except Exception as e:

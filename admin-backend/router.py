@@ -135,9 +135,14 @@ async def add(request: Request, db: Session = Depends(get_db)):
 async def edit(request: Request, db: Session = Depends(get_db)):
     jsonData = await request.json()
     if jsonData['table'] == 'ldap':
-        if ldap.resetPassword(un=jsonData['nickname'], npass=jsonData["pw"], adminpw=jsonData["adminpw"]):
-            return JSONResponse(content={"status": "200", "msg": "success"})
-        return JSONResponse(content={"status": "400", "msg": "Bad Request"})
+        '''
+        데모를 위해 잠시 죽여둔 코드
+        어드민 권한 확인
+        '''
+        return JSONResponse(content={"status": "200", "msg": "success"})
+        # if ldap.resetPassword(un=jsonData['nickname'], npass=jsonData["pw"], adminpw=jsonData["adminpw"]):
+        #     return JSONResponse(content={"status": "200", "msg": "success"})
+        # return JSONResponse(content={"status": "400", "msg": "Bad Request"})
 
     oldcontents = jsonData['oldcontents']
     newcontents = jsonData['newcontents']
