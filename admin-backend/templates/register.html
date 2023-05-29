@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>memvers.sparcs.org</title>
+    <link rel="icon" type="image/svg+xml" sizes="69x150" href="assets/img/sparcs/Symbol.svg">
+    <link rel="icon" type="image/svg+xml" sizes="69x150" href="assets/img/sparcs/Symbol.svg">
+    <link rel="icon" type="image/svg+xml" sizes="69x150" href="assets/img/sparcs/Symbol.svg">
+    <link rel="icon" type="image/svg+xml" sizes="69x150" href="assets/img/sparcs/Symbol.svg">
+    <link rel="icon" type="image/svg+xml" sizes="69x150" href="assets/img/sparcs/Symbol.svg">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0" style="color: var(--bs-card-cap-bg);background: var(--bs-blue);">
+            <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/">
+                    <div class="sidebar-brand-text mx-3"><span>memvers</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="/index"><i class="fas fa-tachometer-alt"></i><span>Main</span></a></li>
+                    <li class="nav-item"></li>
+                    <li class="nav-item"><a class="nav-link" href="/memvers"><i class="fas fa-table"></i><span>Memvers</span></a></li>
+                    <li class="nav-item"></li>
+                    <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-circle"></i><span>Nugu</span></a><a class="nav-link" href="/ldap"><i class="fas fa-user-circle"></i>LDAP</a></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
+                        <div class="input-group w-50"><input class="bg-light form-control border-0 small" type="text" id="GlobalSearchBar" placeholder="Search for ..." onchange="GlobalOnSearch();" onkeypress="GlobalOnSearch();" onkeyup="GlobalOnSearch();"><button class="btn btn-primary py-0" id="GlobalSearchBtn" type="button"><i class="fas fa-search"></i></button></div>
+                        <div onclick="location.href=&#39;/logout&#39;" style="cursor: pointer;"><span class="d-none d-lg-inline me-2 text-gray-600 small">Logout</span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-box-arrow-right">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"></path>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                            </svg></div>
+                    </div>
+                </nav>
+                <div class="container">
+                    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-dark mb-0">Register SPARCS</h3>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                            <div class="card mb-5">
+                                <div class="card-body p-sm-5">
+                                    <h2 class="text-center mb-4">Nugu, Who r u?</h2>
+                                    <div>
+                                        <div class="mb-3"><input type="text" id="nickname" name="nickname" placeholder="Nickname" required="" style="width: 100%;"></div>
+                                        <div class="mb-3"><input type="password" id="pw" name="pw" placeholder="Password" required="" style="width: 100%;"></div>
+                                        <div class="mb-3"><input type="text" id="studentId" name="studentId" placeholder="Student ID" style="width: 100%;"></div>
+                                        <div class="mb-3"><input type="email" id="email" name="email" placeholder="Email" style="width: 100%;"></div>
+                                        <div class="mb-3"><input type="text" id="phoneNum" name="phoneNum" placeholder="Phone number" style="width: 100%;"></div>
+                                        <div class="mb-3">
+                                            <legend>Manager 임원진 여부</legend><input type="checkbox" id="manager" class="form-check-input" name="manager"><label class="form-label">임원진 입니다.</label>
+                                        </div>
+                                        <div class="mb-3"><input type="text" id="birthday" name="birthday" placeholder="Birthday(YYYYMMDD)" style="width: 100%;"></div>
+                                        <fieldset id="role">
+                                            <div class="mb-3" style="margin: auto;align-content: center;">
+                                                <legend>Dev | Designer | Wheel</legend><input type="checkbox" id="developer" class="form-check-input" name="developer"><label class="form-label" style="padding-right: 10px;">Dev</label><input type="checkbox" id="designer" class="form-check-input" name="designer"><label class="form-label" style="padding-right: 10px;">Designer</label><input type="checkbox" id="wheel" class="form-check-input" name="wheel"><label class="form-label">Wheel</label>
+                                            </div>
+                                        </fieldset>
+                                        <div class="mb-3">
+                                            <legend>Rank 회원</legend><select id="rnk" name="rnk">
+                                                <option value="0" selected="">준회원</option>
+                                                <option value="1">정회원</option>
+                                                <option value="2">명예 회원</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <legend>Hide 비공개 여부</legend><input type="checkbox" id="hide" class="form-check-input" name="hide"><label class="form-label">내 정보를 공개하지 않습니다.</label>
+                                        </div>
+                                        <div><button class="btn btn-primary d-block w-100" id="nuguregisterbutton" onclick="onSubmitRegister();">Register</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © 2023 SPARCS</span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/achievement.js"></script>
+    <script src="assets/js/edit.js"></script>
+    <script src="assets/js/footprint.js"></script>
+    <script src="assets/js/hashlib.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/nugu.js"></script>
+    <script src="assets/js/outlink.js"></script>
+    <script src="assets/js/project.js"></script>
+    <script src="assets/js/register.js"></script>
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/stack.js"></script>
+    <script src="assets/js/validate.js"></script>
+</body>
+
+</html>
