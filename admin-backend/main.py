@@ -49,9 +49,13 @@ async def session_managing_middleware(request: Request, call_next):
     if "/assets" in request.url.path:
         return response
     if request.url.path == "/login":
+        print("/login" + " " + request.method)
         return response
     if not IsUUIDValid(request, redi) and request.url.path != "/login":
         return RedirectResponse(url="/login", status_code=302)
+    if IsUUIDValid(request=request, redi=redi):
+        __uuid = RefreshSession(request=request, redi=redi)
+        response.set_cookie(key="uuid", value=__uuid, httponly=True)
     return response
 
 @app.exception_handler(404)

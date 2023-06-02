@@ -16,42 +16,22 @@ function OnClickDeleteNugu() {
         "table": "nugu",
         "nickname": nickname
     };
-    fetch("/search?content=" + nickname + "&column=nickname&table=nugu&mode=EXACT")
+    fetch("/delete", {
+        method: "POST", 
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData)
+    })
     .then(response => response.json())
     .then(result => {
-        if ( result.status == "200" && result.data.length > 0) {
-            jsonData.studentId = result.data[0].studentId;
-            jsonData.email = result.data[0].email;
-            jsonData.phoneNum = result.data[0].phoneNum;
-            jsonData.manager = result.data[0].manager == 0 ? false : true;
-            jsonData.birthday = result.data[0].birthday == 0 || null || "" || IsBirtdayValid(result.data[0].birthday) ? "" : result.data[0].birthday;
-            jsonData.developer = result.data[0].developer == 0 ? false : true;
-            jsonData.designer = result.data[0].designer == 0 ? false : true;
-            jsonData.wheel = result.data[0].wheel == 0 ? false : true;
-            jsonData.rnk = result.data[0].rnk;
-            jsonData.hide = result.data[0].hide == 0 ? false : true;
-            fetch("/delete", {
-                method: "POST", 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(jsonData)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if ( result.status == "200" ) {
-                    alert("Success to delete nugu");
-                    location.reload();
-                } else {
-                    alert("Failed to delete nugu");
-                }
-            });
+        if ( result.status == "200" ) {
+            alert("Success to delete nugu");
+            location.reload();
         } else {
-            alert("There is no data to delete "+ nickname +".");
-            return;
+            alert("Failed to delete nugu");
         }
     });
-    
 }
 
 function FetchNuguDataFromDB() {

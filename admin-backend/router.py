@@ -41,8 +41,10 @@ async def login(request: Request):
 
 @router.get("/logout", include_in_schema=False)
 async def logout(request: Request):
-    redi.delete(request.cookies.get("uuid"))
-    return RedirectResponse(url="/login", status_code=302)
+    LogoutSession(request, redi)
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie(key="uuid")
+    return response
 
 @router.get("/memvers", include_in_schema=False)
 async def memvers(request: Request):
@@ -70,12 +72,10 @@ async def login(request: Request):
     *(ldap 로그인은 활성화 되어있음.)
     '''
     if ldap.bind(__formData.get("id"), __formData.get("pw")):# and (ldap.IsWheel(__formData.get("id"), __formData.get("pw")) or ldap.IsAdmin(__formData.get("pw"))):
-        __uuid = uuid.uuid1().hex
-        import datetime
-        redi.set(__uuid, datetime.datetime.utcnow().timestamp(), ex=60*60)
-        _response = JSONResponse(content={"result": "success"})
-        _response.set_cookie(key="uuid", value=__uuid)
-        return _response
+        __uuid = CreateSession(request, redi)
+        response = JSONResponse(content={"result": "success"})
+        response.set_cookie(key="uuid", value=__uuid, httponly=True)
+        return response
     else:
         return JSONResponse(content={"result": "failed"})
 
