@@ -10,15 +10,12 @@ def expire_session(func):
         rtn = func(request, redi)
         __uuid = request.cookies.get("uuid")
         if __uuid != None:
-            print("expire_session", __uuid)
-            print("new session", rtn)
             redi.delete(__uuid)
         return rtn
     return wrapper
 
 def IsUUIDValid(request : Request, redi : Redi) -> bool:
     try:
-        import datetime
         __uuid = request.cookies.get("uuid")
         if getUTCnow() - float(redi.get(key=__uuid).decode("utf-8")) > 5*60:
             return False
